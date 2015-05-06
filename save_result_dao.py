@@ -38,12 +38,16 @@ def parse_result(result, pattern):
 
     if pattern == '<title':
         l = result.split("\r\n")
-        if l:
-            title = l[0].strip()
-            m = re.search('>(.*)<?', title)
-            if m:
-                return m.group(1).strip()
+        if not l:
+            return result
 
+        title = l[0].strip()
+        m = re.search('>(.*)<?', title)
+        if m:
+            m2 = re.search('(.*)?<', title)
+            if m2:
+                return m2.group(1).strip()
+            return m.group(1).strip()
     return result
 
 
