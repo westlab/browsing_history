@@ -92,6 +92,9 @@ class HTTPCommunication:
         """
         return self.uri is not None and self.host is not None
 
+    def __repr__(self):
+        return "%s(%r)" % (self.__class__.__name__, self.__dict__)
+
 
 def is_request_and_response_pair(request, response):
     """
