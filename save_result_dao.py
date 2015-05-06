@@ -44,10 +44,11 @@ def parse_result(result, pattern):
         title = l[0].strip()
         m = re.search('>(.*)<?', title)
         if m:
-            index = title.find('<')
+            clean_title = m.group(1).strip()
+            index = clean_title.find('<')
             if index != -1:
-                return title[:index]
-            return m.group(1).strip()
+                return clean_title[:index]
+            return clean_title
     return result
 
 
