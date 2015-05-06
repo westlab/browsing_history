@@ -2,14 +2,15 @@ import time
 from datetime import datetime
 
 from http_communication import HTTPCommunication, is_request_and_response_pair
+from browsing_dao import BrowsingDao
 
 
 class BrowsingReconstruct:
-    def __init__(self, timeout=60*30):
+    def __init__(self, db, timeout=60*30):
         self._http_comms = {}
         self._timeout = timeout # Seconds
         self._counter = 0
-        self._browsing_dao = None
+        self._browsing_dao = BrowsingDao(db)
 
     def add_http_result(self, http_result):
         http_comm = HTTPCommunication(http_result.id, http_result.src_ip,
@@ -55,6 +56,7 @@ class BrowsingReconstruct:
 
     def _is_http_comm_valid(self, key):
         http_comm = self._http_comms[key]
+        repr(http_comm)
         if not http_comm.is_valid():
             return False
 
