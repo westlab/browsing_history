@@ -69,8 +69,7 @@ class BrowsingReconstruct:
         return True
 
     def _save_browsing(self, key):
-        # self._browsing_dao.save(self._http_comms[key])
-        print(self._http_comms[key].url, self._http_comms[key].title)
+        self._browsing_dao.save(self._http_comms[key])
 
     def _gc(self):
         current_time = datetime.now()

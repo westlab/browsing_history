@@ -19,7 +19,7 @@ INSERT_HTTP_COMMUNICATION = """\
 INSERT INTO browsing_history
 (src_ip, src_port, dst_ip, dst_port, timestamp, title, url)
 VALUES
-({src_ip}, {src_port}, {dst_ip}, {dst_port}, {timestamp}, {title}, {url})
+('{src_ip}', {src_port}, '{dst_ip}', {dst_port}, '{timestamp}', '{title}', '{url}')
 """
 
 
