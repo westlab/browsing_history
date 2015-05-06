@@ -44,9 +44,9 @@ def parse_result(result, pattern):
         title = l[0].strip()
         m = re.search('>(.*)<?', title)
         if m:
-            m2 = re.search('(.*)?<', title)
-            if m2:
-                return m2.group(1).strip()
+            index = title.find('<')
+            if index != -1:
+                return title[:index]
             return m.group(1).strip()
     return result
 
