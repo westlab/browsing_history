@@ -24,21 +24,21 @@ class BrowsingReconstruct:
             self._http_comms[key] = http_comm
 
         if http_result.pattern == 'Host:':
-            if not http_comm.five_tuple_key in self._http_comms:
+            if not key in self._http_comms:
                 return
 
             if self._http_comms[key].stream_id == http_comm.stream_id:
                 self._http_comms[key].host = http_result.result
 
         if http_result.pattern == 'Content-Type:':
-            if not http_comm.five_tuple_key in self._http_comms:
+            if not key in self._http_comms:
                 return
 
             if is_request_and_response_pair(self._http_comms[key], http_comm):
                 self._http_comms[key].content_type = http_result.result
 
         if http_result.pattern == '<title':
-            if not http_comm.five_tuple_key in self._http_comms:
+            if not key in self._http_comms:
                 return
 
             if is_request_and_response_pair(self._http_comms[key], http_comm):
