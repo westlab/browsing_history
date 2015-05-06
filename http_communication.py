@@ -37,14 +37,14 @@ class HTTPCommunication:
         """
             Return URL
 
-            >>> http = HTTPCommunication('1.1.1.1', '2.2.2.2', 80, 1234, '2014/1/1 00:00:00', 1)
+            >>> http = HTTPCommunication(1, '1.1.1.1', '2.2.2.2', 80, 1234, '2014/1/1 00:00:00', 1)
             >>> http.url
             >>> http.host = 'google.com'
             >>> http.uri = '/search'
             >>> http.url
             'http://google.com/search'
         """
-        if self._uri and self._host:
+        if self.uri and self.host:
             return "http://" + self._host + self._uri
 
     @property
@@ -65,8 +65,8 @@ class HTTPCommunication:
             Generate Hash key
             hash is generated from src ip, dst ip, src port and dst port
 
-            >>> x = HTTPCommunication('2.2.2.2', '1.1.1.1', 1234, 80, '2014/1/1 00:00:00', 1)
-            >>> y = HTTPCommunication('1.1.1.1', '2.2.2.2', 80, 1234, '2014/1/1 00:00:00', 1)
+            >>> x = HTTPCommunication(1, '2.2.2.2', '1.1.1.1', 1234, 80, '2014/1/1 00:00:00', 1)
+            >>> y = HTTPCommunication(1, '1.1.1.1', '2.2.2.2', 80, 1234, '2014/1/1 00:00:00', 1)
             >>> x.five_tuple_key == y.five_tuple_key
             True
         """
@@ -82,7 +82,7 @@ class HTTPCommunication:
         """
             Check url and uri are stored.
 
-            >>> http = HTTPCommunication('1.1.1.1', '2.2.2.2', 80, 1234, '2014/1/1 00:00:00', 1)
+            >>> http = HTTPCommunication(1, '1.1.1.1', '2.2.2.2', 80, 1234, '2014/1/1 00:00:00', 1)
             >>> http.is_valid()
             False
             >>> http.host = 'google.com'
@@ -90,7 +90,7 @@ class HTTPCommunication:
             >>> http.is_valid()
             True
         """
-        return self._uri is not None and self._host is not None
+        return self.uri is not None and self.host is not None
 
 
 def is_request_and_response_pair(request, response):
@@ -98,8 +98,8 @@ def is_request_and_response_pair(request, response):
         Check if request and response pair
         dst and src ip and dst and src port would be opposite
 
-        >>> x = HTTPCommunication('2.2.2.2', '1.1.1.1', 1234, 80, '2014/1/1 00:00:00', 1)
-        >>> y = HTTPCommunication('1.1.1.1', '2.2.2.2', 80, 1234, '2014/1/1 00:00:00', 2)
+        >>> x = HTTPCommunication(1, '2.2.2.2', '1.1.1.1', 1234, 80, '2014/1/1 00:00:00', 1)
+        >>> y = HTTPCommunication(1, '1.1.1.1', '2.2.2.2', 80, 1234, '2014/1/1 00:00:00', 2)
         >>> is_request_and_response_pair(x, y)
         True
     """
