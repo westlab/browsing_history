@@ -1,19 +1,20 @@
-import sqlite3
 import hashlib
-import re
+from datetime import datetime
 
-
-class HTTP:
-    def __init__(self, src_ip, dst_ip, src_port, dst_port, timestamp):
+class HTTPCommunication:
+    def __init__(self, id, src_ip, dst_ip, src_port, dst_port, timestamp, stream_id):
+        self._id = id
         self.timestamp = timestamp
         self.src_ip = src_ip
         self.dst_ip = dst_ip
         self.src_port = src_port
         self.dst_port = dst_port
+        self.stream_id = stream_id
         self._uri = None
         self._host = None
         self._content_type = None
         self._title = None
+        self._created_at = datetime.now()
 
     @property
     def host(self):
@@ -34,33 +35,39 @@ class HTTP:
     @property
     def url(self):
         """
+            Return URL
 
-        >>> http = HTTP('1.1.1.1', '2.2.2.2', 80, 1234, '2014/1/1 00:00:00')
-        >>> http.url
-        >>> http.host = 'google.com'
-        >>> http.uri = '/search'
-        >>> http.url
-        'http://google.com/search'
+            >>> http = HTTPCommunication('1.1.1.1', '2.2.2.2', 80, 1234, '2014/1/1 00:00:00', 1)
+            >>> http.url
+            >>> http.host = 'google.com'
+            >>> http.uri = '/search'
+            >>> http.url
+            'http://google.com/search'
         """
         if self._uri and self._host:
             return "http://" + self._host + self._uri
 
     @property
-    def context_type(self):
+    def content_type(self):
         return self._content_type
 
-    @context_type.setter
+    @content_type.setter
     def content_type(self, value):
         self._content_type = value
 
+    @property
+    def created_at(self):
+        return self._created_at
+
+    @property
     def five_tuple_key(self):
         """
             Generate Hash key
             hash is generated from src ip, dst ip, src port and dst port
 
-            >>> x = HTTP('2.2.2.2', '1.1.1.1', 1234, 80, '2014/1/1 00:00:00')
-            >>> y = HTTP('1.1.1.1', '2.2.2.2', 80, 1234, '2014/1/1 00:00:00')
-            >>> x.five_tuple_key() == y.five_tuple_key()
+            >>> x = HTTPCommunication('2.2.2.2', '1.1.1.1', 1234, 80, '2014/1/1 00:00:00', 1)
+            >>> y = HTTPCommunication('1.1.1.1', '2.2.2.2', 80, 1234, '2014/1/1 00:00:00', 1)
+            >>> x.five_tuple_key == y.five_tuple_key
             True
         """
         keys = [self.src_ip,
@@ -75,7 +82,7 @@ class HTTP:
         """
             Check url and uri are stored.
 
-            >>> http = HTTP('1.1.1.1', '2.2.2.2', 80, 1234, '2014/1/1 00:00:00')
+            >>> http = HTTPCommunication('1.1.1.1', '2.2.2.2', 80, 1234, '2014/1/1 00:00:00', 1)
             >>> http.is_valid()
             False
             >>> http.host = 'google.com'
@@ -91,16 +98,17 @@ def is_request_and_response_pair(request, response):
         Check if request and response pair
         dst and src ip and dst and src port would be opposite
 
-        >>> x = HTTP('2.2.2.2', '1.1.1.1', 1234, 80, '2014/1/1 00:00:00')
-        >>> y = HTTP('1.1.1.1', '2.2.2.2', 80, 1234, '2014/1/1 00:00:00')
+        >>> x = HTTPCommunication('2.2.2.2', '1.1.1.1', 1234, 80, '2014/1/1 00:00:00', 1)
+        >>> y = HTTPCommunication('1.1.1.1', '2.2.2.2', 80, 1234, '2014/1/1 00:00:00', 2)
         >>> is_request_and_response_pair(x, y)
         True
     """
-    if not isinstance(request, HTTP) and isinstance(response, HTTP):
+    if not isinstance(request, HTTPCommunication) and isinstance(response, HTTPCommunication):
         return False
 
     if (request.src_ip == response.dst_ip and
         request.dst_ip == response.src_ip and
         request.src_port == response.dst_port and
         request.dst_port == response.src_port):
+
         return True

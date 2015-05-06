@@ -1,8 +1,10 @@
 import re
-from urlib.parse import urlparse
+from urllib.parse import urlparse
+
 
 class URLFilter:
     _file_extensions = ['.js', '.png', '.css', '.jpg', '.jpeg', '.gif']
+
     def is_valid(self, url):
         parsed_url = urlparse(url)
         if not parsed_url:
