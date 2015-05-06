@@ -6,7 +6,7 @@ from browsing_dao import BrowsingDao
 
 
 class BrowsingReconstruct:
-    def __init__(self, db, timeout=60*30):
+    def __init__(self, db, timeout=10):
         self._http_comms = {}
         self._timeout = timeout # Seconds
         self._counter = 0
@@ -50,7 +50,7 @@ class BrowsingReconstruct:
                 del self._http_comms[key]
 
         self._counter += 1
-        if self._counter > 1000:
+        if self._counter > 100000:
             self._gc()
             self._counter = 0
 
