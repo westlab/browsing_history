@@ -1,5 +1,6 @@
 import sqlite3
 import re
+from datetime import datetime
 
 
 INIT_SQL ="""\
@@ -23,7 +24,18 @@ VALUES
 ("{src_ip}", {src_port}, "{dst_ip}", {dst_port}, "{timestamp}", "{title}", "{url}")
 """
 
+SELECT_FOR_BROWSING_TIME = """\
+SELECT id, src_ip, timestamp FROM browsing_history
+WHERE browsing_time IS NULL OR browsing_time = ''
+"""
 
+UPDATE_BROWSING_TIME="""\
+UPDATE browsing_history
+SET browsing_time = '{browsing_time}'
+WHERE id = {id}
+"""
+
+timestamp_tmp = "%Y-%m-%d %H:%M:%S"
 
 class BrowsingDao:
     def __init__(self, db):
@@ -55,3 +67,15 @@ class BrowsingDao:
 
     def calicurate_browsing_time(self):
         pass
+
+    def get_id_srcip_timestamp(self):
+        sql = SELECT_FOR_BROWSING_TIME
+        for row in self._conn.execute(sql):
+            yield dict(id=row[0], src_ip=row[1],
+                        timestamp=datetime.strptime(row[2], timestamp_tmp))
+
+    def update_browsint_time(self, http_id, browsing_time):
+        sql = UPDATE_BROWSING_TIME.format(id=http_id,
+                                          browsing_time=browsing_time)
+        self._conn.execute(sql)
+        self._conn.commit()
