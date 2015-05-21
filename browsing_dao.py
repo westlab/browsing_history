@@ -1,6 +1,9 @@
 import sqlite3
 import re
+from urllib.parse import urlparse
 from datetime import datetime
+
+from collections import Counter
 
 
 INIT_SQL ="""\
@@ -59,6 +62,10 @@ SELECT COUNT(*) FROM browsing_history
 WHERE browsing_time IS NOT NULL AND {condition}
 """
 
+DOMAIN = """\
+SELECT url FROM browsing_history
+WHERE browsing_time IS NOT NULL
+"""
 
 timestamp_tmp = "%Y-%m-%d %H:%M:%S"
 
@@ -123,10 +130,21 @@ class BrowsingDao:
         r = self._conn.execute(sql).fetchone()
         return r[0]
 
+    def domain_ranking(self, n=10):
+        c = Counter()
+        sql = DOMAIN
+        for row in self._conn.execute(sql):
+            if row[0]:
+                o = urlparse(row[0])
+                c[o.netloc] += 1
+        top = c.most_common(n)
+        r = [dict(url=x[0], frequency=x[1]) for x in top]
+        return r
 
 
 if __name__ == "__main__":
     bd = BrowsingDao('/tmp/browsing_history.sqlite3')
 #    r = bd.get_browsing_by_src_ip('172.16.79.11', ['id'])
 #    print(list(r))
-    print(bd.count_all())
+#    print(bd.count_all())
+    print(bd.domain_ranking())
