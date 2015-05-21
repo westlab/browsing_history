@@ -49,6 +49,16 @@ ORDER BY id DESC
 LIMIT {limit}
 """
 
+COUNT = """\
+SELECT COUNT(*) FROM browsing_history
+WHERE browsing_time IS NOT NULL
+"""
+
+COUNT_WHERE = """\
+SELECT COUNT(*) FROM browsing_history
+WHERE browsing_time IS NOT NULL AND {condition}
+"""
+
 
 timestamp_tmp = "%Y-%m-%d %H:%M:%S"
 
@@ -103,8 +113,20 @@ class BrowsingDao:
         for row in self._conn.execute(sql):
             yield dict(zip(cols, row))
 
+    def count_all(self):
+        sql = COUNT
+        r = self._conn.execute(sql).fetchone()
+        return r[0]
+
+    def count_all_with_condition(self, condition):
+        sql = COUNT_WHERE.format(condition=condition)
+        r = self._conn.execute(sql).fetchone()
+        return r[0]
+
+
 
 if __name__ == "__main__":
     bd = BrowsingDao('/tmp/browsing_history.sqlite3')
-    r = bd.get_browsing_by_src_ip('172.16.79.11', ['id'])
-    print(list(r))
+#    r = bd.get_browsing_by_src_ip('172.16.79.11', ['id'])
+#    print(list(r))
+    print(bd.count_all())
