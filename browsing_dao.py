@@ -20,7 +20,7 @@ INSERT_HTTP_COMMUNICATION = """\
 INSERT INTO browsing_history
 (src_ip, src_port, dst_ip, dst_port, timestamp, title, url)
 VALUES
-('{src_ip}', {src_port}, '{dst_ip}', {dst_port}, '{timestamp}', '{title}', '{url}')
+("{src_ip}", {src_port}, "{dst_ip}", {dst_port}, "{timestamp}", "{title}", "{url}")
 """
 
 
@@ -42,10 +42,16 @@ class BrowsingDao:
         sql = INSERT_HTTP_COMMUNICATION.format(
                 src_ip=http_comm.src_ip, src_port=http_comm.src_port,
                 dst_ip=http_comm.dst_ip, dst_port=http_comm.dst_port,
-                timestamp=http_comm.timestamp, title=title,
-                url=http_comm.url)
+                timestamp=http_comm.timestamp,
+                title=self._escape_sql(http_comm.title),
+                url=self._escape_sql(http_comm.url))
         self._conn.execute(sql)
         self._conn.commit()
+
+    def _escape_sql(self, sql):
+        sql = sql.replace("'", "''", 10000000)
+        sql = sql.replace('"', "", 10000000)
+        return sql
 
     def calicurate_browsing_time(self):
         pass
