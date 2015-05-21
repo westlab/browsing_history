@@ -35,6 +35,21 @@ SET browsing_time = '{browsing_time}'
 WHERE id = {id}
 """
 
+SELECT_TMP = """\
+SELECT {cols} FROM browsing_history
+WHERE browsing_time IS NOT NULL
+ORDER BY id DESC
+LIMIT {limit}
+"""
+
+SELECT_WHERE = """\
+SELECT {cols} FROM browsing_history
+WHERE browsing_time IS NOT NULL AND {condition}
+ORDER BY id DESC
+LIMIT {limit}
+"""
+
+
 timestamp_tmp = "%Y-%m-%d %H:%M:%S"
 
 class BrowsingDao:
@@ -65,9 +80,6 @@ class BrowsingDao:
         sql = sql.replace('"', "", 10000000)
         return sql
 
-    def calicurate_browsing_time(self):
-        pass
-
     def get_id_srcip_timestamp(self):
         sql = SELECT_FOR_BROWSING_TIME
         for row in self._conn.execute(sql):
@@ -79,3 +91,20 @@ class BrowsingDao:
                                           browsing_time=browsing_time)
         self._conn.execute(sql)
         self._conn.commit()
+
+    def get_with_browsing_time(self, cols, limit=100):
+        sql = SELECT_TMP.format(cols=",".join(cols), limit=limit)
+        for row in self._conn.execute(sql):
+            yield dict(zip(cols, row))
+
+    def get_browsing_by_src_ip(self, src_ip, cols, limit=100):
+        condition = "src_ip = '%s'" % src_ip
+        sql = SELECT_WHERE.format(cols=",".join(cols), limit=limit, condition=condition)
+        for row in self._conn.execute(sql):
+            yield dict(zip(cols, row))
+
+
+if __name__ == "__main__":
+    bd = BrowsingDao('/tmp/browsing_history.sqlite3')
+    r = bd.get_browsing_by_src_ip('172.16.79.11', ['id'])
+    print(list(r))
