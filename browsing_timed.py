@@ -1,4 +1,4 @@
-from browsing_dao import BrowsingDao
+from dao.browsing_dao import BrowsingDao
 
 
 dao = BrowsingDao('/tmp/browsing_history.sqlite3')

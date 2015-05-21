@@ -1,4 +1,4 @@
-from save_result_dao import SaveResultDao
+from dao.save_result_dao import SaveResultDao
 from browsing_reconstruct import BrowsingReconstruct
 
 browsing_reconstruct = BrowsingReconstruct('/tmp/browsing_history.sqlite3')
