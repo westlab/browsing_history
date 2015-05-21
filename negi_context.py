@@ -1,4 +1,4 @@
-from browsing_dao import BrowsingDao
+from dao.browsing_dao import BrowsingDao
 from flask import Blueprint, Flask
 
 browsing_db = '/tmp/browsing_history.sqlite3'
