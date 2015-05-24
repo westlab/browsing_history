@@ -3,6 +3,7 @@ from datetime import datetime
 
 from http_communication import HTTPCommunication, is_request_and_response_pair
 from browsing_dao import BrowsingDao
+from http_filters import HttpFilters
 
 
 class BrowsingReconstruct:
@@ -11,6 +12,7 @@ class BrowsingReconstruct:
         self._timeout = timeout # Seconds
         self._counter = 0
         self._browsing_dao = BrowsingDao(db)
+        self._filters = HttpFilters()
 
     def add_http_result(self, http_result):
         http_comm = HTTPCommunication(http_result.id, http_result.src_ip,
@@ -46,7 +48,8 @@ class BrowsingReconstruct:
 
                 # Check http comm is valid or not
                 if self._is_http_comm_valid(key):
-                    self._save_browsing(key)
+                    if self._apply_filters(self._http_comms[key]):
+                        self._save_browsing(key)
                 del self._http_comms[key]
 
         self._counter += 1
@@ -63,7 +66,16 @@ class BrowsingReconstruct:
         if not http_comm.content_type == 'text/html':
             return False
 
-        if http_comm.title is None:
+        if not http_comm.title:
+            return False
+
+        return True
+
+    def _apply_filters(self, http_comm):
+        if not self._filters.url(http_comm.url):
+            return False
+
+        if not self._filters.title(http_comm.title):
             return False
 
         return True
