@@ -8,8 +8,27 @@ CREATE TABLE IF NOT EXISTS "browsing_history" (
 "timestamp" TEXT,
 "title" TEXT,
 "url" TEXT,
-"browsing_time" FLOAT
+"browsing_time" FLOAT,
+"download" INTEGER
 )
+"""
+
+INIT_Maria = """\
+CREATE TABLE IF NOT EXISTS browsing_history (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  src_ip varchar(255) NOT NULL,
+  dst_ip varchar(255) NOT NULL,
+  src_port int(11) NOT NULL,
+  dst_port int(11) NOT NULL,
+  timestamp datetime NOT NULL,
+  title text,
+  url text,
+  browsing_time float,
+  download int(11),
+  PRIMARY KEY (id),
+  KEY index_browsing_history_on_timestamp (timestamp),
+  KEY index_browsing_history_on_src_ip (src_ip)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
 """
 
 INSERT_HTTP_COMMUNICATION = """\
