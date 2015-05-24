@@ -59,6 +59,11 @@ SELECT url FROM browsing_history
 WHERE browsing_time IS NOT NULL
 """
 
+SRCIP = """\
+SELECT src_ip FROM browsing_history
+WHERE browsing_time IS NOT NULL
+"""
+
 SEARCH_TMP = """\
 SELECT {cols} FROM browsing_history
 WHERE browsing_time IS NOT NULL

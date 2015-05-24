@@ -32,10 +32,20 @@ def personal_browsing(src_ip):
                     mimetype='application/json',
                     headers=headers)
 
-@v1.route('/ranking', methods=['GET'])
+@v1.route('/rankings/domain', methods=['GET'])
 def ranking():
     # TODO: ranking recent 3 hours?
     data = browsing_dao.domain_ranking()
+    count = len(data)
+    headers = {"X-Data-Count": count}
+    return Response(json.dumps(data),
+                    mimetype='application/json',
+                    headers=headers)
+
+@v1.route('/rankings/src_ip', methods=['GET'])
+def ranking():
+    # TODO: ranking recent 3 hours?
+    data = browsing_dao.src_ip_ranking()
     count = len(data)
     headers = {"X-Data-Count": count}
     return Response(json.dumps(data),

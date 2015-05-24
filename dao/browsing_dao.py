@@ -79,7 +79,7 @@ class BrowsingDao:
                 o = urlparse(row[0])
                 c[o.netloc] += 1
         top = c.most_common(n)
-        r = [dict(url=x[0], frequency=x[1]) for x in top]
+        r = [dict(name=x[0], count=x[1]) for x in top]
         return r
 
     def search(self, keyword, cols):
@@ -87,10 +87,20 @@ class BrowsingDao:
         for row in self._conn.execute(sql):
             yield dict(zip(cols, row))
 
+    def src_ip_ranking(self, n=10):
+        c = Counter()
+        sql = SRCIP
+        for row in self._conn.execute(sql):
+            c[row[0]] += 1
+        top = c.most_common(n)
+        r = [dict(name=x[0], count=x[1]) for x in top]
+        return r
+
+
 
 if __name__ == "__main__":
     bd = BrowsingDao('/tmp/browsing_history.sqlite3')
 #    r = bd.get_browsing_by_src_ip('172.16.79.11', ['id'])
 #    print(list(r))
 #    print(bd.count_all())
-    print(bd.domain_ranking())
+    print(bd.src_ip_ranking())
