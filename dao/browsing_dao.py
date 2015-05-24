@@ -67,6 +67,20 @@ SELECT url FROM browsing_history
 WHERE browsing_time IS NOT NULL
 """
 
+SEARCH_TMP = """\
+SELECT {cols} FROM browsing_history
+WHERE browsing_time IS NOT NULL
+    AND (
+        src_ip REGEXP '{keyword}'
+        OR dst_ip REGEXP '{keyword}'
+        OR src_port REGEXP '{keyword}'
+        OR dst_port REGEXP '{keyword}'
+        OR url REGEXP '{keyword}'
+        OR title REGEXP '{keyword}'
+    )
+ORDER BY id DESC
+"""
+
 timestamp_tmp = "%Y-%m-%d %H:%M:%S"
 
 class BrowsingDao:
@@ -140,6 +154,11 @@ class BrowsingDao:
         top = c.most_common(n)
         r = [dict(url=x[0], frequency=x[1]) for x in top]
         return r
+
+    def search(self, keyword, cols):
+        sql = SEARCH_TMP.format(keyword=keyword, cols=",".join(cols))
+        for row in self._conn.execute(sql):
+            yield dict(zip(cols, row))
 
 
 if __name__ == "__main__":
