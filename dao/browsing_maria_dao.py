@@ -1,6 +1,6 @@
 import re
 from urllib.parse import urlparse
-from datetime import datetime
+from datetime import datetime, timedelta
 from collections import Counter
 
 import MySQLdb as Mariadb
@@ -109,3 +109,22 @@ class BrowsingMariaDao:
         top = c.most_common(n)
         r = [dict(name=x[0], count=x[1]) for x in top]
         return r
+
+    # TODO: Implement this
+    def word_cloud(self, n=100):
+        c = Counter()
+        timestamp_fmt = "%Y-%m-%d %H:%M:%S"
+        now = datetime.now()
+        timestamp = now - timedelta(minutes = 30)
+        sql = WORDCLOUD.format(border=timestamp.strftime(timestamp_fmt))
+        cursor = self._con.cursor()
+        cursor.execute(sql)
+        rows =  cursor.fetchall()
+        for row in rows:
+            c[row[0]] += row[1]
+        top = c.most_common(n)
+        r = [dict(name=x[0],count=x[1]) for x in top]
+        return r
+        """
+        Return word and word count within 30 minites
+        """
