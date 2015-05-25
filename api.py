@@ -75,11 +75,3 @@ def word_cloud():
     return Response(json.dumps(data),
                     mimetype='application/json',
                     headers=headers)
-    """
-    Return JSON
-    [
-        {'name': 'word', 'count': 100},
-        {'name': 'word', 'count': 100}
-    ]
-    """
-

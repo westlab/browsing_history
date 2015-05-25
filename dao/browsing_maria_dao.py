@@ -110,10 +110,11 @@ class BrowsingMariaDao:
         r = [dict(name=x[0], count=x[1]) for x in top]
         return r
 
-    # TODO: Implement this
     def word_cloud(self, n=100):
+        """
+        Return word and word count within 30 minites
+        """
         c = Counter()
-        timestamp_fmt = "%Y-%m-%d %H:%M:%S"
         now = datetime.now()
         timestamp = now - timedelta(minutes = 30)
         sql = WORDCLOUD.format(border=timestamp.strftime(timestamp_fmt))
@@ -125,6 +126,3 @@ class BrowsingMariaDao:
         top = c.most_common(n)
         r = [dict(name=x[0],count=x[1]) for x in top]
         return r
-        """
-        Return word and word count within 30 minites
-        """

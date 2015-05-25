@@ -96,9 +96,6 @@ WHERE browsing_time IS NOT NULL
     )
 ORDER BY id DESC
 """
-# TODO: implement this function
-# select word within 30 minites
-# 18:30 - 19:00
 WORDCLOUD = """\
 SELECT name, count FROM word
 WHERE timestamp > "{border}"
