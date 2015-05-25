@@ -3,6 +3,7 @@ import os
 from dao.browsing_dao import BrowsingDao
 from dao.browsing_maria_dao import BrowsingMariaDao
 from flask import Blueprint, Flask
+from flask.ext.cors import CORS
 
 browsing_db = '/tmp/browsing_history.sqlite3'
 host = 'localhost'
@@ -20,6 +21,7 @@ class NegiContext:
 def start():
     from api import v1
     app = Flask(__name__)
+    cors = CORS(app)
     app.register_blueprint(v1, url_prefix='/v1')
     app.run(port=24001, debug=True)
 
