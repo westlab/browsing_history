@@ -33,7 +33,7 @@ def personal_browsing(src_ip):
                     headers=headers)
 
 @v1.route('/rankings/domain', methods=['GET'])
-def ranking():
+def domain_ranking():
     # TODO: ranking recent 3 hours?
     data = browsing_dao.domain_ranking()
     count = len(data)
@@ -43,7 +43,7 @@ def ranking():
                     headers=headers)
 
 @v1.route('/rankings/src_ip', methods=['GET'])
-def ranking():
+def src_ip_ranking():
     # TODO: ranking recent 3 hours?
     data = browsing_dao.src_ip_ranking()
     count = len(data)
