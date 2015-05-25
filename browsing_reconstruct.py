@@ -2,7 +2,6 @@ import time
 from datetime import datetime
 
 from http_communication import HTTPCommunication, is_request_and_response_pair
-from browsing_dao import BrowsingDao
 from http_filters import HttpFilters
 
 

@@ -13,7 +13,12 @@ timestamp_fmt = "%Y-%m-%d %H:%M:%S"
 class BrowsingMariaDao:
     def __init__(self, host, user, password, db):
         self._driver = Mariadb
-        self._con = self._driver.connect(host, user, password, db)
+        self._con = self._driver.connect(host,
+                                         user,
+                                         password,
+                                         db,
+                                         charset='utf8',
+                                         use_unicode=True)
         self._init_db()
 
     def __del__(self):
