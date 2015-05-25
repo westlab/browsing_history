@@ -21,7 +21,7 @@ def start():
     from api import v1
     app = Flask(__name__)
     app.register_blueprint(v1, url_prefix='/v1')
-    app.run(debug=True)
+    app.run(port=24001, debug=True)
 
 if __name__ == "__main__":
     start()
