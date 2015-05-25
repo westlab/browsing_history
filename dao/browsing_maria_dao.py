@@ -51,9 +51,11 @@ class BrowsingMariaDao:
     def get_id_srcip_timestamp(self):
         sql = SELECT_FOR_BROWSING_TIME
         cursor = self._con.cursor()
-        for row in cursor.execute(sql):
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+        for row in rows:
             yield dict(id=row[0], src_ip=row[1],
-                        timestamp=datetime.strptime(row[2], timestamp_fmt))
+                        timestamp=row[2])
 
     def update_browsint_time(self, http_id, browsing_time):
         sql = UPDATE_BROWSING_TIME.format(id=http_id,
@@ -65,33 +67,40 @@ class BrowsingMariaDao:
     def get_with_browsing_time(self, cols, limit=100):
         sql = SELECT_TMP.format(cols=",".join(cols), limit=limit)
         cursor = self._con.cursor()
-        for row in cursor.execute(sql):
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+        for row in rows:
             yield dict(zip(cols, row))
 
     def get_browsing_by_src_ip(self, src_ip, cols, limit=100):
         condition = "src_ip = '%s'" % src_ip
         sql = SELECT_WHERE.format(cols=",".join(cols), limit=limit, condition=condition)
         cursor = self._con.cursor()
-        for row in cursor.execute(sql):
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+        for row in rows:
             yield dict(zip(cols, row))
 
     def count_all(self):
         sql = COUNT
         cursor = self._con.cursor()
-        r = cursor.execute(sql).fetchone()
+        cursor.execute(sql)
+        r = cursor.fetchone()
         return r[0]
 
     def count_all_with_condition(self, condition):
         sql = COUNT_WHERE.format(condition=condition)
         cursor = self._con.cursor()
-        r = cursor.execute(sql).fetchone()
+        cursor.execute(sql)
+        r = cursor.fetchone()
         return r[0]
 
     def domain_ranking(self, n=10):
         c = Counter()
         sql = DOMAIN
         cursor = self._con.cursor()
-        for row in cursor.execute(sql):
+        cursor.execute(sql)
+        for row in rows:
             if row[0]:
                 o = urlparse(row[0])
                 c[o.netloc] += 1
@@ -109,7 +118,9 @@ class BrowsingMariaDao:
         c = Counter()
         sql = SRCIP
         cursor = self._con.cursor()
-        for row in cursor.execute(sql):
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+        for row in rows:
             c[row[0]] += 1
         top = c.most_common(n)
         r = [dict(name=x[0], count=x[1]) for x in top]
@@ -125,7 +136,7 @@ class BrowsingMariaDao:
         sql = WORDCLOUD.format(border=timestamp.strftime(timestamp_fmt))
         cursor = self._con.cursor()
         cursor.execute(sql)
-        rows =  cursor.fetchall()
+        rows = cursor.fetchall()
         for row in rows:
             c[row[0]] += row[1]
         top = c.most_common(n)
