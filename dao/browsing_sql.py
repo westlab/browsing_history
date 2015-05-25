@@ -96,3 +96,7 @@ WHERE browsing_time IS NOT NULL
     )
 ORDER BY id DESC
 """
+WORDCLOUD = """\
+SELECT name, count FROM word
+WHERE timestamp > "{border}"
+"""

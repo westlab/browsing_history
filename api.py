@@ -2,7 +2,7 @@ from flask import Blueprint, Response, json, request
 from negi_context import NegiContext
 
 v1 = Blueprint('v1', __name__)
-browsing_dao = NegiContext.daos['browsing']
+browsing_dao = NegiContext.daos['browsing_maria']
 
 @v1.route('/browsings', methods=['GET'])
 def browsings():
@@ -61,6 +61,15 @@ def search():
     else:
         browsings = browsing_dao.get_with_browsing_time(cols)
         data = browsing_dao.count_all()
+    count = len(data)
+    headers = {"X-Data-Count": count}
+    return Response(json.dumps(data),
+                    mimetype='application/json',
+                    headers=headers)
+
+@v1.route('/word', methods=['GET'])
+def word_cloud():
+    data = browsing_dao.word_cloud()
     count = len(data)
     headers = {"X-Data-Count": count}
     return Response(json.dumps(data),
