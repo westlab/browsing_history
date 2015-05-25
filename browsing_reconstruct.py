@@ -2,16 +2,15 @@ import time
 from datetime import datetime
 
 from http_communication import HTTPCommunication, is_request_and_response_pair
-from browsing_dao import BrowsingDao
 from http_filters import HttpFilters
 
 
 class BrowsingReconstruct:
-    def __init__(self, db, timeout=10):
+    def __init__(self, browsing_dao, timeout=10):
         self._http_comms = {}
         self._timeout = timeout # Seconds
         self._counter = 0
-        self._browsing_dao = BrowsingDao(db)
+        self._browsing_dao = browsing_dao
         self._filters = HttpFilters()
 
     def add_http_result(self, http_result):
