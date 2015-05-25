@@ -1,7 +1,12 @@
-from dao.browsing_dao import BrowsingDao
+import os
+
+from dao.browsing_maria_dao import BrowsingMariaDao
 
 
-dao = BrowsingDao('/tmp/browsing_history.sqlite3')
+user = os.environ['MARIADB_ID']
+password = os.environ['MARIADB_PASS']
+dao = BrowsingMariaDao('localhost', user, password, 'interop2015')
+
 http_map = {}
 for e in dao.get_id_srcip_timestamp():
     if e['src_ip'] in http_map:

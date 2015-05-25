@@ -13,7 +13,10 @@ db = 'interop2015'
 class NegiContext:
     daos = dict(
             browsing=BrowsingDao(browsing_db),
-            browsing_maria=BrowsingMariaDao(host, user, password, db)
+            browsing_maria=BrowsingMariaDao(host,
+                                            user,
+                                            password,
+                                            db)
             )
 
 
