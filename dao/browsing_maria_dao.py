@@ -100,6 +100,7 @@ class BrowsingMariaDao:
         sql = DOMAIN
         cursor = self._con.cursor()
         cursor.execute(sql)
+        rows = cursor.fetchall()
         for row in rows:
             if row[0]:
                 o = urlparse(row[0])
