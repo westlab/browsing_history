@@ -2,7 +2,7 @@ from flask import Blueprint, Response, json, request
 from negi_context import NegiContext
 
 v1 = Blueprint('v1', __name__)
-browsing_dao = NegiContext.daos['browsing']
+browsing_dao = NegiContext.daos['browsing_maria']
 
 @v1.route('/browsings', methods=['GET'])
 def browsings():
@@ -32,10 +32,20 @@ def personal_browsing(src_ip):
                     mimetype='application/json',
                     headers=headers)
 
-@v1.route('/ranking', methods=['GET'])
-def ranking():
+@v1.route('/rankings/domain', methods=['GET'])
+def domain_ranking():
     # TODO: ranking recent 3 hours?
     data = browsing_dao.domain_ranking()
+    count = len(data)
+    headers = {"X-Data-Count": count}
+    return Response(json.dumps(data),
+                    mimetype='application/json',
+                    headers=headers)
+
+@v1.route('/rankings/src_ip', methods=['GET'])
+def src_ip_ranking():
+    # TODO: ranking recent 3 hours?
+    data = browsing_dao.src_ip_ranking()
     count = len(data)
     headers = {"X-Data-Count": count}
     return Response(json.dumps(data),
@@ -51,6 +61,15 @@ def search():
     else:
         browsings = browsing_dao.get_with_browsing_time(cols)
         data = browsing_dao.count_all()
+    count = len(data)
+    headers = {"X-Data-Count": count}
+    return Response(json.dumps(data),
+                    mimetype='application/json',
+                    headers=headers)
+
+@v1.route('/word', methods=['GET'])
+def word_cloud():
+    data = browsing_dao.word_cloud()
     count = len(data)
     headers = {"X-Data-Count": count}
     return Response(json.dumps(data),
