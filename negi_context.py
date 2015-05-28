@@ -2,6 +2,7 @@ import os
 
 from dao.browsing_dao import BrowsingDao
 from dao.browsing_maria_dao import BrowsingMariaDao
+from dao.negi_meta_maria_dao import NegiMetaMariaDao
 from flask import Blueprint, Flask
 from flask.ext.cors import CORS
 
@@ -15,7 +16,8 @@ class NegiContext:
     daos = dict(
             browsing=BrowsingDao(browsing_db),
             browsing_maria=BrowsingMariaDao(host, user, password, db),
-            word=WordMariaDao(host, user, password, db)
+            word=WordMariaDao(host, user, password, db),
+            negi_meta=NegiMetaMariaDao(host, user, password, db)
             )
 
 
