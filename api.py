@@ -3,6 +3,7 @@ from negi_context import NegiContext
 
 v1 = Blueprint('v1', __name__)
 browsing_dao = NegiContext.daos['browsing_maria']
+word_dao = NegiContext.daos['word']
 
 @v1.route('/browsings', methods=['GET'])
 def browsings():
@@ -69,7 +70,7 @@ def search():
 
 @v1.route('/word', methods=['GET'])
 def word_cloud():
-    data = browsing_dao.word_cloud()
+    data = word_dao.get(10)
     count = len(data)
     headers = {"X-Data-Count": count}
     return Response(json.dumps(data),
