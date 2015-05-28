@@ -62,8 +62,3 @@ class WordMariaDao(MariaDao):
     def put(self, word, count):
         sql = WORD_INSERT.format(words="('{0}', {1})".format(word, count))
         self._execute(sql)
-
-    def _execute(self, sql):
-        cursor = self._con.cursor()
-        cursor.execute(sql)
-        self._con.commit()

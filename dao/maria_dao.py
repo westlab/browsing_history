@@ -24,3 +24,8 @@ class MariaDao:
         cursor = self._con.cursor()
         cursor.execute(sql)
         self._con.commit()
+
+    def _execute(self, sql):
+        cursor = self._con.cursor()
+        cursor.execute(sql)
+        self._con.commit()
