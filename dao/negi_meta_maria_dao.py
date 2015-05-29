@@ -14,7 +14,7 @@ INSERT_OR_UPDATE="""\
 INSERT INTO negi_meta
   (name, value)
 VALUES
-  ({name}, {value})
+  ('{name}', {value})
 ON DUPLICATE KEY UPDATE
   value = VALUES(value)
 """
