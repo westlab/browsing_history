@@ -75,5 +75,4 @@ pip-selfcheck.json
 .idea
 
 # conf file
-conf
-conf/*/*.conf
+conf/*

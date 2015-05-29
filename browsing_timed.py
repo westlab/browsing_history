@@ -1,11 +1,36 @@
 import os
+import argparse
+import configparser
 
 from dao.browsing_maria_dao import BrowsingMariaDao
 
+description = """\
+calcurate browsing time
+"""
 
-user = os.environ['MARIADB_ID']
-password = os.environ['MARIADB_PASS']
-dao = BrowsingMariaDao('localhost', user, password, 'interop2015')
+# TODO: remove this duplicated code in browsing.py
+conf = dict()
+negi_conf = dict()
+
+parser = argparse.ArgumentParser(description=description)
+parser.add_argument('conf',\
+                    type=str,\
+                    help='directory path to config file')
+args = parser.parse_args()
+
+config = configparser.ConfigParser()
+config.read(args.conf)
+
+conf['user']= config['db']['user']
+conf['password']= config['db']['password']
+conf['host']= config['db']['host']
+conf['db']= config['db']['database']
+negi_conf['db'] = config['negi']['db']
+
+dao = BrowsingMariaDao(conf['host'],
+                                conf['user'],
+                                conf['password'],
+                                conf['db'])
 
 http_map = {}
 for e in dao.get_id_srcip_timestamp():
