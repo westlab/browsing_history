@@ -28,9 +28,9 @@ conf['db']= config['db']['database']
 negi_conf['db'] = config['negi']['db']
 
 dao = BrowsingMariaDao(conf['host'],
-                                conf['user'],
-                                conf['password'],
-                                conf['db'])
+                       conf['user'],
+                       conf['password'],
+                       conf['db'])
 
 http_map = {}
 for e in dao.get_id_srcip_timestamp():

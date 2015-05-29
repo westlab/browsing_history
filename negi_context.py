@@ -1,23 +1,46 @@
 import os
+import argparse
+import configparser
 
 from dao.browsing_dao import BrowsingDao
 from dao.browsing_maria_dao import BrowsingMariaDao
+from dao.word_maria_dao import WordMariaDao
 from dao.negi_meta_maria_dao import NegiMetaMariaDao
 from flask import Blueprint, Flask
 from flask.ext.cors import CORS
 
+description="""\
+negi context for rest server
+"""
+
 browsing_db = '/tmp/browsing_history.sqlite3'
-host = 'localhost'
-user = os.environ['MARIADB_ID']
-password = os.environ['MARIADB_PASS']
-db = 'interop2015'
+
+parser = argparse.ArgumentParser(description=description)
+parser.add_argument('conf',\
+                    type=str,\
+                    help='directory path to config file')
+args = parser.parse_args()
+
+config = configparser.ConfigParser()
+config.read(args.conf)
 
 class NegiContext:
+    config = config
+
     daos = dict(
             browsing=BrowsingDao(browsing_db),
-            browsing_maria=BrowsingMariaDao(host, user, password, db),
-            word=WordMariaDao(host, user, password, db),
-            negi_meta=NegiMetaMariaDao(host, user, password, db)
+            browsing_maria=BrowsingMariaDao(config['db']['host'],
+                                            config['db']['user'],
+                                            config['db']['password'],
+                                            config['db']['database']),
+            word=WordMariaDao(config['db']['host'],
+                              config['db']['user'],
+                              config['db']['password'],
+                              config['db']['database']),
+            negi_meta=NegiMetaMariaDao(config['db']['host'],
+                                       config['db']['user'],
+                                       config['db']['password'],
+                                       config['db']['database']),
             )
 
 
