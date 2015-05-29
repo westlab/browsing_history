@@ -10,7 +10,7 @@ from dao.browsing_sql import *
 
 class BrowsingMariaDao(MariaDao):
     def __init__(self, host, user, password, db):
-        super(MariaDao, self).__init__(host, user, password, db)
+        super().__init__(host, user, password, db)
         self._init_db(INIT_Maria)
 
     def save(self, http_comm):
