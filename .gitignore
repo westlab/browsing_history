@@ -76,3 +76,5 @@ pip-selfcheck.json
 
 # conf file
 conf/*
+
+*.swp
