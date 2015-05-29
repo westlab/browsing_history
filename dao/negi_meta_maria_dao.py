@@ -1,4 +1,4 @@
-from dao.maria_dao from MariaDao
+from dao.maria_dao import MariaDao
 
 INIT_NEGI_META="""\
 CREATE TABLE IF NOT EXISTS `negi_meta` (
@@ -27,8 +27,8 @@ LIMIT 1
 
 class NegiMetaMariaDao(MariaDao):
     def __init__(self, host, user, password, db):
-        super(MariaDao, self).__init__(host, user, password, db)
-        self._init_db(INIT_WORD)
+        super().__init__(host, user, password, db)
+        self._init_db(INIT_NEGI_META)
 
     def put(self, key, val):
         sql = INSERT_OR_UPDATE.format(name=key, value=val)

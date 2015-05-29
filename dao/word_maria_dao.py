@@ -1,7 +1,7 @@
 from collections import Counter
 from datetime import datetime, timedelta
 
-from maria_dao import MariaDao
+from dao.maria_dao import MariaDao
 
 INIT_WORD = """\
 CREATE TABLE IF NOT EXISTS `word` (
@@ -31,7 +31,7 @@ def bulk_insert_sql(words):
 
 class WordMariaDao(MariaDao):
     def __init__(self, host, user, password, db):
-        super(MariaDao, self).__init__(host, user, password, db)
+        super().__init__(host, user, password, db)
         self._init_db(INIT_WORD)
 
     def get(self, within, n=100):
