@@ -6,6 +6,7 @@ from dao.browsing_dao import BrowsingDao
 from dao.browsing_maria_dao import BrowsingMariaDao
 from dao.word_maria_dao import WordMariaDao
 from dao.negi_meta_maria_dao import NegiMetaMariaDao
+from common.logging.logger_factory import LoggerFactory
 
 description="""\
 negi context for rest server
@@ -14,12 +15,12 @@ negi context for rest server
 browsing_db = '/tmp/browsing_history.sqlite3'
 
 parser = argparse.ArgumentParser(description=description)
-parser.add_argument('program',\
-                    type=str,\
-                    choices=['server', 'browsing_timed'],\
+parser.add_argument('program',
+                    type=str,
+                    choices=('server', 'browsing_timed'),
                     help='program that you want to run')
-parser.add_argument('conf',\
-                    type=str,\
+parser.add_argument('conf',
+                    type=str,
                     help='directory path to config file')
 args = parser.parse_args()
 
@@ -47,9 +48,12 @@ class NegiContext:
 
 
 def rest_server():
-    from flask import Blueprint, Flask
+    from flask import Flask
     from flask.ext.cors import CORS
     from api import v1
+    LoggerFactory.init()
+    logger = LoggerFactory.create_logger('rest_server')
+    logger.info("test")
     context = NegiContext
     port = context.config.getint('rest_server', 'port')
     debug = context.config.getboolean('rest_server', 'debug')
