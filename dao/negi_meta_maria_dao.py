@@ -28,7 +28,7 @@ LIMIT 1
 class NegiMetaMariaDao(MariaDao):
     def __init__(self, host, user, password, db):
         super().__init__(host, user, password, db)
-        self._init_db(INIT_NEGI_META)
+        self._execute(INIT_NEGI_META)
 
     def put(self, key, val):
         sql = INSERT_OR_UPDATE.format(name=key, value=val)
@@ -36,8 +36,8 @@ class NegiMetaMariaDao(MariaDao):
 
     def get(self, key):
         sql = GET_VALUE.format(name=key)
-        cursor = self._con.cursor()
-        cursor.execute(sql)
-        r = cursor.fetchone()
-        if r:
-            return r[0]
+        with self._con.cursor() as cursor:
+            cursor.execute(sql)
+            r = cursor.fetchone()
+            if r:
+                return r[0]
