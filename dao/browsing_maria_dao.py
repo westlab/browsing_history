@@ -1,4 +1,3 @@
-import re
 from urllib.parse import urlparse
 from datetime import datetime, timedelta
 from collections import Counter

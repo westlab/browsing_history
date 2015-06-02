@@ -1,7 +1,6 @@
-import time
 from datetime import datetime
 
-from http_communication import HTTPCommunication, is_request_and_response_pair
+from dto.http_communication import HTTPCommunication, is_request_and_response_pair
 from http_filters import HttpFilters
 
 
