@@ -3,7 +3,7 @@ from tempfile import TemporaryFile
 from pkg_resources import resource_stream, resource_string, resource_filename
 
 
-class LoggerFactory(object):
+class LoggerFactory:
     DEFAULT_LOG_CONFIG = "logging.cfg"
 
     @staticmethod

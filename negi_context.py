@@ -7,6 +7,7 @@ from dao.browsing_maria_dao import BrowsingMariaDao
 from dao.word_maria_dao import WordMariaDao
 from dao.negi_meta_maria_dao import NegiMetaMariaDao
 from common.logging.logger_factory import LoggerFactory
+from browsing_timed import BrowsingTimeWorker
 
 description="""\
 negi context for rest server
@@ -46,6 +47,7 @@ class NegiContext:
                                        config['db']['database']),
             )
 
+context = NegiContext()
 
 def rest_server():
     from flask import Flask
@@ -54,7 +56,6 @@ def rest_server():
     LoggerFactory.init()
     logger = LoggerFactory.create_logger('rest_server')
     logger.info("test")
-    context = NegiContext
     port = context.config.getint('rest_server', 'port')
     debug = context.config.getboolean('rest_server', 'debug')
 
@@ -64,8 +65,10 @@ def rest_server():
     app.run(port=port, debug=debug)
 
 def browsing_time_deamon():
-    from browsing_timed import browsing_timed
-    browsing_timed(NegiContext)
+    browsing_time_worker = BrowsingTimeWorker(context)
+    browsing_time_worker.daemon = True
+    browsing_time_worker.start()
+    browsing_time_worker.join()
 
 def load_from_negi():
     pass
