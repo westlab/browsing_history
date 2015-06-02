@@ -67,10 +67,7 @@ def rest_server():
 def browsing_time_deamon():
     browsing_time_worker = BrowsingTimeWorker(context)
     browsing_time_worker.daemon = True
-    repr(browsing_time_worker)
-    print(browsing_time_worker)
     browsing_time_worker.start()
-    print('start')
     browsing_time_worker.join()
 
 def load_from_negi():

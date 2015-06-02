@@ -36,10 +36,8 @@ class BrowsingTimeWorker(Process):
         #self._logger = LoggerFactory.create_logger("browsing_time_worker")
         self._context = context
         super().__init__()
-        print("finish init")
 
     def run(self):
-        print('hoge')
         #self._logger.info('BrowsingTimeWorker is instantiated.')
         browsing_dao = self._context.daos['browsing_maria']
         meta_dao = self._context.daos['negi_meta']
@@ -47,7 +45,6 @@ class BrowsingTimeWorker(Process):
         while True:
             http_map = {}
             cnt = 0
-            print('loop')
             row = None
             for row in browsing_dao.get_id_srcip_timestamp():
                 print(row)
