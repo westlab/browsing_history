@@ -4,7 +4,7 @@ from dto.http_result_dto import HTTPResultDto
 SELECT_SAVE_RESULT="""\
 SELECT id, stream_id, src_ip, src_port, dst_ip, dst_port,
        pattern, timestamp, result
-ROM save_result
+FROM save_result
 """
 
 class SaveResultDao:

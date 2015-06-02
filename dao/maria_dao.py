@@ -10,18 +10,22 @@ class MariaDao:
 
     def __init__(self, host, user, password, db):
         self._driver = Mariadb
-        self._con = self._driver.connect(host,
-                                         user,
-                                         password,
-                                         db,
-                                         charset='utf8',
-                                         use_unicode=True)
+        self._host = host
+        self._user = user
+        self._password = password
+        self._db = db
 
-    def __del__(self):
-        if self._con:
-            self._con.close()
+    def _connect(self):
+        con = self._driver.connect(self._host,
+                                   self._user,
+                                   self._password,
+                                   self._db,
+                                   charset='utf8',
+                                   use_unicode=True)
+        return con
 
     def _execute(self, sql):
-        with self._con.cursor() as cursor:
+        con = self._connect()
+        with con:
+            cursor = con.cursor()
             cursor.execute(sql)
-            self._con.commit()
