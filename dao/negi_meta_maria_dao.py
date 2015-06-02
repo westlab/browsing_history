@@ -21,7 +21,7 @@ ON DUPLICATE KEY UPDATE
 
 GET_VALUE="""\
 SELECT value FROM negi_meta
-WHERE name = {name}
+WHERE name = '{name}'
 LIMIT 1
 """
 
@@ -36,7 +36,7 @@ class NegiMetaMariaDao(MariaDao):
 
     def get(self, key):
         sql = GET_VALUE.format(name=key)
-        con = self._execute()
+        con = self._connect()
         with con:
             cursor = con.cursor()
             cursor.execute(sql)

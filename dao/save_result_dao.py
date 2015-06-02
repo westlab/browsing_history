@@ -9,21 +9,28 @@ FROM save_result
 
 class SaveResultDao:
     def __init__(self, db):
-        self._conn = sqlite3.connect(db)
-        self._conn.text_factory = lambda x: x.decode('utf-8', errors='ignore')
+        self._db = db
+
+    def _connect(self):
+        con = sqlite3.connect(self._db)
+        con.text_factory = lambda x: x.decode('utf-8', errors='ignore')
+        return con
 
     def get_result(self, after=None, limit=None):
-        c = self._conn.cursor()
         sql = SELECT_SAVE_RESULT
 
         if after is not None:
-            sql += ' WHERE id > %d' % after
+            sql += ' WHERE id > {0}'.format(after)
 
         if limit is not None:
-            sql += ' LIMIT %d' % limit
+            sql += ' LIMIT {0}'.format(limit)
 
-        for row in c.execute(sql):
-            yield self._format_result(row)
+        con = self._connect()
+        with con:
+            cursor = con.cursor()
+            cursor.execute(sql)
+            for row in cursor.fetchall():
+                yield self._format_result(row)
 
     def _format_result(self, row):
         return HTTPResultDto(*row)

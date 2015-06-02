@@ -33,7 +33,6 @@ def estimate_browsing_time(context):
 
 class BrowsingTimeWorker(Process):
     def __init__(self, context):
-        LoggerFactory.init(config_file="browsing_time_estimation.cfg")
         self._logger = LoggerFactory.create_logger(self)
         self._context = context
         super().__init__()

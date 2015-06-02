@@ -2,10 +2,12 @@ from datetime import datetime
 
 from dto.http_communication import HTTPCommunication, is_request_and_response_pair
 from http_filters import HttpFilters
+from common.logging.logger_factory import LoggerFactory
 
 
 class BrowsingReconstruct:
     def __init__(self, browsing_dao, timeout=10):
+        self._logger = LoggerFactory.create_logger(self)
         self._http_comms = {}
         self._timeout = timeout  # Seconds
         self._counter = 0
@@ -14,9 +16,9 @@ class BrowsingReconstruct:
 
     def add_http_result(self, http_result):
         http_comm = HTTPCommunication(http_result.id, http_result.src_ip,
-                        http_result.dst_ip, http_result.src_port,
-                        http_result.dst_port, http_result.timestamp,
-                        http_result.stream_id)
+                                      http_result.dst_ip, http_result.src_port,
+                                      http_result.dst_port, http_result.timestamp,
+                                      http_result.stream_id)
 
         key = http_comm.five_tuple_key
         if http_result.pattern == 'GET':
@@ -92,3 +94,5 @@ class BrowsingReconstruct:
 
         for key in gc_keys:
             del self._http_comms[key]
+
+        self._logger.info("{0} record are deleted".format(len(gc_keys)))
