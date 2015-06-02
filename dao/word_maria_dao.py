@@ -46,7 +46,9 @@ class WordMariaDao(MariaDao):
             cols=",".join(cols),
             border=timestamp.strftime(self.timestamp_fmt)
             )
-        with self._con.cursor() as cursor:
+        con = self._connect()
+        with con:
+            cursor = con.cursor()
             cursor.execute(sql)
             rows = cursor.fetchall()
             for row in rows:

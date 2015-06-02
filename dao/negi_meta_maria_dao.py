@@ -36,7 +36,9 @@ class NegiMetaMariaDao(MariaDao):
 
     def get(self, key):
         sql = GET_VALUE.format(name=key)
-        with self._con.cursor() as cursor:
+        con = self._execute()
+        with con:
+            cursor = con.cursor()
             cursor.execute(sql)
             r = cursor.fetchone()
             if r:

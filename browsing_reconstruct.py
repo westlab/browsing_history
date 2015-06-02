@@ -7,7 +7,7 @@ from http_filters import HttpFilters
 class BrowsingReconstruct:
     def __init__(self, browsing_dao, timeout=10):
         self._http_comms = {}
-        self._timeout = timeout # Seconds
+        self._timeout = timeout  # Seconds
         self._counter = 0
         self._browsing_dao = browsing_dao
         self._filters = HttpFilters()
@@ -24,21 +24,21 @@ class BrowsingReconstruct:
             self._http_comms[key] = http_comm
 
         if http_result.pattern == 'Host:':
-            if not key in self._http_comms:
+            if key not in self._http_comms:
                 return
 
             if self._http_comms[key].stream_id == http_comm.stream_id:
                 self._http_comms[key].host = http_result.result
 
         if http_result.pattern == 'Content-Type:':
-            if not key in self._http_comms:
+            if key not in self._http_comms:
                 return
 
             if is_request_and_response_pair(self._http_comms[key], http_comm):
                 self._http_comms[key].content_type = http_result.result
 
         if http_result.pattern == '<title':
-            if not key in self._http_comms:
+            if key not in self._http_comms:
                 return
 
             if is_request_and_response_pair(self._http_comms[key], http_comm):

@@ -30,7 +30,9 @@ class BrowsingMariaDao(MariaDao):
         now = datetime.now()
         timeout = now - timedelta(minutes=within)
         sql = SELECT_FOR_BROWSING_TIME.format(timeout=timeout)
-        with self._con.cursor() as cursor:
+        con = self._connect()
+        with con:
+            cursor = con.cursor()
             cursor.execute(sql)
             for row in cursor.fetchall():
                 yield dict(id=row[0], src_ip=row[1], timestamp=row[2])
@@ -42,7 +44,9 @@ class BrowsingMariaDao(MariaDao):
 
     def get_with_browsing_time(self, cols, limit=100):
         sql = SELECT_TMP.format(cols=",".join(cols), limit=limit)
-        with self._con.cursor() as cursor:
+        con = self._connect()
+        with con:
+            cursor = con.cursor()
             cursor.execute(sql)
             for row in cursor.fetchall():
                 yield dict(zip(cols, row))
@@ -52,7 +56,9 @@ class BrowsingMariaDao(MariaDao):
         sql = SELECT_WHERE.format(cols=",".join(cols),
                                   limit=limit,
                                   condition=condition)
-        with self._con.cursor() as cursor:
+        con = self._connect()
+        with con:
+            cursor = con.cursor()
             cursor.execute(sql)
             for row in cursor.fetchall():
                 yield dict(zip(cols, row))
@@ -66,7 +72,9 @@ class BrowsingMariaDao(MariaDao):
 
     def count_all_with_condition(self, condition):
         sql = COUNT_WHERE.format(condition=condition)
-        with self._con.cursor() as cursor:
+        con = self._connect()
+        with con:
+            cursor = con.cursor()
             cursor.execute(sql)
             count = cursor.fetchone()[0]
             return count
@@ -74,7 +82,9 @@ class BrowsingMariaDao(MariaDao):
     def domain_ranking(self, n=10):
         c = Counter()
         sql = DOMAIN
-        with self._con.cursor() as cursor:
+        con = self._connect()
+        with con:
+            cursor = con.cursor()
             cursor.execute(sql)
             for row in cursor.fetchall():
                 if row[0]:
@@ -86,7 +96,9 @@ class BrowsingMariaDao(MariaDao):
 
     def search(self, keyword, cols):
         sql = SEARCH_TMP.format(keyword=keyword, cols=",".join(cols))
-        with self._con.cursor() as cursor:
+        con = self._connect()
+        with con:
+            cursor = con.cursor()
             cursor.execute(sql)
             for row in cursor.fetchall():
                 yield dict(zip(cols, row))
@@ -94,7 +106,9 @@ class BrowsingMariaDao(MariaDao):
     def src_ip_ranking(self, n=10):
         c = Counter()
         sql = SRCIP
-        with self._con.cursor() as cursor:
+        con = self._connect()
+        with con:
+            cursor = con.cursor()
             cursor.execute(sql)
             for row in cursor.execute(sql):
                 c[row[0]] += 1
