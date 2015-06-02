@@ -14,14 +14,12 @@ class BrowsingMariaDao(MariaDao):
         self._init_db(INIT_Maria)
 
     def save(self, http_comm):
-        title = http_comm.title
-        title = title.replace("'", "''", 10000)
         sql = INSERT_HTTP_COMMUNICATION.format(
-                src_ip=http_comm.src_ip, src_port=http_comm.src_port,
-                dst_ip=http_comm.dst_ip, dst_port=http_comm.dst_port,
-                timestamp=http_comm.timestamp,
-                title=self._escape_sql(http_comm.title),
-                url=self._escape_sql(http_comm.url))
+            src_ip=http_comm.src_ip, src_port=http_comm.src_port,
+            dst_ip=http_comm.dst_ip, dst_port=http_comm.dst_port,
+            timestamp=http_comm.timestamp,
+            title=self._escape_sql(http_comm.title),
+            url=self._escape_sql(http_comm.url))
         cursor = self._con.cursor()
         cursor.execute(sql)
         self._con.commit()
@@ -31,14 +29,15 @@ class BrowsingMariaDao(MariaDao):
         sql = sql.replace('"', "", 10000000)
         return sql
 
-    def get_id_srcip_timestamp(self):
-        sql = SELECT_FOR_BROWSING_TIME
+    def get_id_srcip_timestamp(self, within=30):
+        now = datetime.now()
+        timeout = now - timedelta(minutes=within)
+        sql = SELECT_FOR_BROWSING_TIME.format(timeout=timeout)
         cursor = self._con.cursor()
         cursor.execute(sql)
         rows = cursor.fetchall()
         for row in rows:
-            yield dict(id=row[0], src_ip=row[1],
-                        timestamp=row[2])
+            yield dict(id=row[0], src_ip=row[1], timestamp=row[2])
 
     def update_browsint_time(self, http_id, browsing_time):
         sql = UPDATE_BROWSING_TIME.format(id=http_id,
@@ -51,40 +50,39 @@ class BrowsingMariaDao(MariaDao):
         sql = SELECT_TMP.format(cols=",".join(cols), limit=limit)
         cursor = self._con.cursor()
         cursor.execute(sql)
-        rows = cursor.fetchall()
-        for row in rows:
+        for row in cursor.fetchall():
             yield dict(zip(cols, row))
 
     def get_browsing_by_src_ip(self, src_ip, cols, limit=100):
         condition = "src_ip = '%s'" % src_ip
-        sql = SELECT_WHERE.format(cols=",".join(cols), limit=limit, condition=condition)
+        sql = SELECT_WHERE.format(cols=",".join(cols),
+                                  limit=limit,
+                                  condition=condition)
         cursor = self._con.cursor()
         cursor.execute(sql)
-        rows = cursor.fetchall()
-        for row in rows:
+        for row in cursor.fetchall():
             yield dict(zip(cols, row))
 
     def count_all(self):
         sql = COUNT
         cursor = self._con.cursor()
         cursor.execute(sql)
-        r = cursor.fetchone()
-        return r[0]
+        count = cursor.fetchone()[0]
+        return count
 
     def count_all_with_condition(self, condition):
         sql = COUNT_WHERE.format(condition=condition)
         cursor = self._con.cursor()
         cursor.execute(sql)
-        r = cursor.fetchone()
-        return r[0]
+        count = cursor.fetchone()[0]
+        return count
 
     def domain_ranking(self, n=10):
         c = Counter()
         sql = DOMAIN
         cursor = self._con.cursor()
         cursor.execute(sql)
-        rows = cursor.fetchall()
-        for row in rows:
+        for row in cursor.fetchall():
             if row[0]:
                 o = urlparse(row[0])
                 c[o.netloc] += 1
@@ -95,7 +93,8 @@ class BrowsingMariaDao(MariaDao):
     def search(self, keyword, cols):
         sql = SEARCH_TMP.format(keyword=keyword, cols=",".join(cols))
         cursor = self._con.cursor()
-        for row in cursor.execute(sql):
+        cursor.execute(sql)
+        for row in cursor.fetchall():
             yield dict(zip(cols, row))
 
     def src_ip_ranking(self, n=10):
@@ -103,9 +102,8 @@ class BrowsingMariaDao(MariaDao):
         sql = SRCIP
         cursor = self._con.cursor()
         cursor.execute(sql)
-        rows = cursor.fetchall()
-        for row in rows:
+        for row in cursor.execute(sql):
             c[row[0]] += 1
         top = c.most_common(n)
-        r = [dict(name=x[0], count=x[1]) for x in top]
-        return r
+        src_ip_rank = [dict(name=x[0], count=x[1]) for x in top]
+        return src_ip_rank
