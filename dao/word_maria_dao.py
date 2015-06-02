@@ -4,13 +4,13 @@ from datetime import datetime, timedelta
 from dao.maria_dao import MariaDao
 
 INIT_WORD = """\
-CREATE TABLE IF NOT EXISTS `word` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `count` int(11) DEFAULT 0,
-  `timestamp` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `index_word_on_timestamp` (`timestamp`)
+CREATE TABLE IF NOT EXISTS word (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  name varchar(255) NOT NULL,
+  count int(11) DEFAULT 0,
+  timestamp datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY index_word_on_timestamp (timestamp)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 """
 
@@ -41,7 +41,7 @@ class WordMariaDao(MariaDao):
         cols = ['name', 'count']
         c = Counter()
         now = datetime.now()
-        timestamp = now - timedelta(minutes = within)
+        timestamp = now - timedelta(minutes=within)
         sql = WORD_WITHIN.format(
                     cols=",".join(cols),
                     border=timestamp.strftime(self.timestamp_fmt)
@@ -56,6 +56,7 @@ class WordMariaDao(MariaDao):
         return r
 
     def bulk_put(self, words):
+        # check is instance is list
         sql = bulk_insert_sql(words)
         self._execute(sql)
 
