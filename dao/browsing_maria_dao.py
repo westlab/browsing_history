@@ -65,7 +65,9 @@ class BrowsingMariaDao(MariaDao):
 
     def count_all(self):
         sql = COUNT
-        with self._con.cursor() as cursor:
+        con = self._connect()
+        with con:
+            cursor = con.cursor()
             cursor.execute(sql)
             count = cursor.fetchone()[0]
             return count
@@ -91,8 +93,8 @@ class BrowsingMariaDao(MariaDao):
                     o = urlparse(row[0])
                     c[o.netloc] += 1
         top = c.most_common(n)
-        r = [dict(name=x[0], count=x[1]) for x in top]
-        return r
+        domain_rank = [dict(name=x[0], count=x[1]) for x in top]
+        return domain_rank
 
     def search(self, keyword, cols):
         sql = SEARCH_TMP.format(keyword=keyword, cols=",".join(cols))

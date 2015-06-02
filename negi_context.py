@@ -2,7 +2,6 @@ import os
 import argparse
 import configparser
 
-from dao.browsing_dao import BrowsingDao
 from dao.browsing_maria_dao import BrowsingMariaDao
 from dao.word_maria_dao import WordMariaDao
 from dao.negi_meta_maria_dao import NegiMetaMariaDao
@@ -32,7 +31,6 @@ class NegiContext:
     config = config
 
     daos = dict(
-            browsing=BrowsingDao(browsing_db),
             browsing_maria=BrowsingMariaDao(config['db']['host'],
                                             config['db']['user'],
                                             config['db']['password'],
