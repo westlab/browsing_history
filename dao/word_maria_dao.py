@@ -32,7 +32,7 @@ def bulk_insert_sql(words):
 class WordMariaDao(MariaDao):
     def __init__(self, host, user, password, db):
         super().__init__(host, user, password, db)
-        self._init_db(INIT_WORD)
+        self._execute(INIT_WORD)
 
     def get(self, within, n=100):
         """
@@ -43,14 +43,14 @@ class WordMariaDao(MariaDao):
         now = datetime.now()
         timestamp = now - timedelta(minutes=within)
         sql = WORD_WITHIN.format(
-                    cols=",".join(cols),
-                    border=timestamp.strftime(self.timestamp_fmt)
-                )
-        cursor = self._con.cursor()
-        cursor.execute(sql)
-        rows = cursor.fetchall()
-        for row in rows:
-            c[row[0]] += row[1]
+            cols=",".join(cols),
+            border=timestamp.strftime(self.timestamp_fmt)
+            )
+        with self._con.cursor() as cursor:
+            cursor.execute(sql)
+            rows = cursor.fetchall()
+            for row in rows:
+                c[row[0]] += row[1]
         top = c.most_common(n)
         r = [dict(name=x[0],count=x[1]) for x in top]
         return r

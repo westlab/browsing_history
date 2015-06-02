@@ -16,16 +16,12 @@ class MariaDao:
                                          db,
                                          charset='utf8',
                                          use_unicode=True)
+
     def __del__(self):
         if self._con:
             self._con.close()
 
-    def _init_db(self, sql):
-        cursor = self._con.cursor()
-        cursor.execute(sql)
-        self._con.commit()
-
     def _execute(self, sql):
-        cursor = self._con.cursor()
-        cursor.execute(sql)
-        self._con.commit()
+        with self._con.cursor() as cursor:
+            cursor.execute(sql)
+            self._con.commit()
