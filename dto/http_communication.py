@@ -45,7 +45,7 @@ class HTTPCommunication:
             'http://google.com/search'
         """
         if self.uri and self.host:
-            return "http://" + self._host + self._uri
+            return "http://" + self.host + self.uri
 
     @property
     def content_type(self):
@@ -106,7 +106,8 @@ def is_request_and_response_pair(request, response):
         >>> is_request_and_response_pair(x, y)
         True
     """
-    if not isinstance(request, HTTPCommunication) and isinstance(response, HTTPCommunication):
+    if not isinstance(request, HTTPCommunication) and \
+            isinstance(response, HTTPCommunication):
         return False
 
     if (request.src_ip == response.dst_ip and

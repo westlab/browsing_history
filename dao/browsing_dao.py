@@ -22,8 +22,6 @@ class BrowsingDao:
         self._conn.commit()
 
     def save(self, http_comm):
-        title = http_comm.title
-        title = title.replace("'", "''", 10000)
         sql = INSERT_HTTP_COMMUNICATION.format(
                 src_ip=http_comm.src_ip, src_port=http_comm.src_port,
                 dst_ip=http_comm.dst_ip, dst_port=http_comm.dst_port,
