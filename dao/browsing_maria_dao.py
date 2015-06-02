@@ -33,11 +33,11 @@ class BrowsingMariaDao(MariaDao):
         now = datetime.now()
         timeout = now - timedelta(minutes=within)
         sql = SELECT_FOR_BROWSING_TIME.format(timeout=timeout)
-        cursor = self._con.cursor()
-        cursor.execute(sql)
-        rows = cursor.fetchall()
-        for row in rows:
-            yield dict(id=row[0], src_ip=row[1], timestamp=row[2])
+        with self._con.cursor() as cursor:
+            cursor.execute(sql)
+            rows = cursor.fetchall()
+            for row in rows:
+                yield dict(id=row[0], src_ip=row[1], timestamp=row[2])
 
     def update_browsint_time(self, http_id, browsing_time):
         sql = UPDATE_BROWSING_TIME.format(id=http_id,

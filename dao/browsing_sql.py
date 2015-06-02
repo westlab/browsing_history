@@ -23,9 +23,9 @@ CREATE TABLE IF NOT EXISTS browsing_history (
   timestamp datetime NOT NULL,
   title text,
   url text,
+  created_at datetime DEFAULT CURRENT_TIMESTAMP,
   browsing_time float,
   download int(11),
-  created_at datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
   KEY index_browsing_history_on_timestamp (timestamp),
   KEY index_browsing_history_on_src_ip (src_ip)
@@ -42,8 +42,7 @@ VALUES
 SELECT_FOR_BROWSING_TIME = """\
 SELECT id, src_ip, timestamp FROM browsing_history
 WHERE (browsing_time IS NULL OR browsing_time = '') AND
-  created_at > {timeout}
-
+  created_at > '{timeout}'
 """
 
 UPDATE_BROWSING_TIME="""\
