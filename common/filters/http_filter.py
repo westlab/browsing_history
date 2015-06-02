@@ -1,6 +1,6 @@
 from urllib.parse import urlparse
 
-class HttpFilters:
+class HttpFilter:
     def __init__(self):
         self._file_ex = ['jpeg', 'gif', 'png', 'ico', 'jpg']
         self._status = ['301', '202', '307', '401', '404', '500', '303', '302']
