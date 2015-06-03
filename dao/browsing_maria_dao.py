@@ -130,7 +130,7 @@ class BrowsingMariaDao(MariaDao):
         if row:
             return dict(id=row[0], src_ip=row[1], timestamp=row[2])
 
-    def http_histogram(self, per=10, num=28):
+    def http_histogram(self, per, num):
         """
         Histogram
 
