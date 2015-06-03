@@ -25,6 +25,7 @@ class BrowsingTimeWorker(Process):
                 if row['src_ip'] in http_map:
                     http = http_map[row['src_ip']]
                 else:
+                    # Preload data within 30 mins could be better performance
                     http = browsing_dao.get_last_browsing_by_src_ip(row['src_ip'])
                 if http:
                     br_time = row['timestamp'] - http['timestamp']
