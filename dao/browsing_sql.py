@@ -1,18 +1,3 @@
-INIT_SQL ="""\
-CREATE TABLE IF NOT EXISTS "browsing_history" (
-"id" INTEGER PRIMARY KEY AUTOINCREMENT,
-"src_ip" TEXT,
-"src_port" INTEGER,
-"dst_ip" TEXT,
-"dst_port" INTEGER,
-"timestamp" TEXT,
-"title" TEXT,
-"url" TEXT,
-"browsing_time" FLOAT,
-"download" INTEGER
-)
-"""
-
 INIT_Maria = """\
 CREATE TABLE IF NOT EXISTS browsing_history (
   id int(11) NOT NULL AUTO_INCREMENT,
