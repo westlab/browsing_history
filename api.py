@@ -77,3 +77,13 @@ def word_cloud():
     return Response(json.dumps(data),
                     mimetype='application/json',
                     headers=headers)
+
+
+@v1.route('/histogram/http', methods=['GET'])
+def http_histogram():
+    data = browsing_dao.http_histogram()
+    count = len(data)
+    headers = {"X-Data-Count": count}
+    return Response(json.dumps(data),
+                    mimetype='application/json',
+                    headers=headers)
