@@ -117,3 +117,13 @@ class BrowsingMariaDao(MariaDao):
         top = c.most_common(n)
         src_ip_rank = [dict(name=x[0], count=x[1]) for x in top]
         return src_ip_rank
+
+    def get_last_browsing_by_src_ip(self, src_ip):
+        sql = LAST_BROWSING_BY_SRC_IP.format(src_ip=src_ip)
+        con = self._connect()
+        with con:
+            cursor = con.cursor()
+            cursor.execute(sql)
+            row = cursor.fetchone()
+        if row:
+            return dict(id=row[0], src_ip=row[1], timestamp=row[2])

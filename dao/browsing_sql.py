@@ -95,3 +95,12 @@ WHERE browsing_time IS NOT NULL
     )
 ORDER BY id DESC
 """
+
+LAST_BROWSING_BY_SRC_IP = """\
+SELECT id, src_ip, timestamp
+FROM browsing_history
+WHERE browsing_time IS NOT NULL AND
+  src_ip = '{src_ip}'
+ORDER BY id DESC
+LIMIT 1
+"""
