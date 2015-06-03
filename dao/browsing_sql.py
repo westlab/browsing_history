@@ -62,12 +62,14 @@ WHERE browsing_time IS NOT NULL AND {condition}
 
 DOMAIN = """\
 SELECT url FROM browsing_history
-WHERE browsing_time IS NOT NULL
+WHERE browsing_time IS NOT NULL AND
+  created_at > '{lower_bound}'
 """
 
 SRCIP = """\
 SELECT src_ip FROM browsing_history
-WHERE browsing_time IS NOT NULL
+WHERE browsing_time IS NOT NULL AND
+  created_at > '{lower_bound}'
 """
 
 SEARCH_TMP = """\

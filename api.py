@@ -34,9 +34,9 @@ def personal_browsing(src_ip):
 
 @v1.route('/rankings/domain', methods=['GET'])
 def domain_ranking():
-    # TODO: ranking recent 3 hours?
     limit = request.args.get('limit', default=10, type=int)
-    data = browsing_dao.domain_ranking(limit)
+    within = request.args.get('within', default=30, type=int)
+    data = browsing_dao.domain_ranking(limit, within)
     count = len(data)
     headers = {"X-Data-Count": count}
     return Response(json.dumps(data),
@@ -45,9 +45,9 @@ def domain_ranking():
 
 @v1.route('/rankings/src_ip', methods=['GET'])
 def src_ip_ranking():
-    # TODO: ranking recent 3 hours?
     limit = request.args.get('limit', default=10, type=int)
-    data = browsing_dao.src_ip_ranking(limit)
+    within = request.args.get('within', default=30, type=int)
+    data = browsing_dao.src_ip_ranking(limit, within)
     count = len(data)
     headers = {"X-Data-Count": count}
     return Response(json.dumps(data),
