@@ -2,9 +2,11 @@ from urllib.parse import urlparse
 from datetime import datetime, timedelta
 from collections import Counter
 
-from dao.maria_dao import MariaDao
+import MySQLdb
 
+from dao.maria_dao import MariaDao
 from dao.browsing_sql import *
+from common.utils import round_datetime_by_minute, pairwise
 
 
 class BrowsingMariaDao(MariaDao):
@@ -127,3 +129,31 @@ class BrowsingMariaDao(MariaDao):
             row = cursor.fetchone()
         if row:
             return dict(id=row[0], src_ip=row[1], timestamp=row[2])
+
+    def http_histogram(self, per=10, num=28):
+        """
+        Histogram
+
+        :param per: minutes for interval
+        :param num: count how many http in each interval
+        :return: dictionary of list
+        """
+        now = round_datetime_by_minute(datetime.now())
+        min_time = now - timedelta(minutes=per * (num + 1))
+        time_units = [min_time + timedelta(minutes=per*i) for i in range(num + 1)]
+        count_condition = []
+        for time_from, time_to in pairwise(time_units):
+            label = time_from.strftime("%H:%M")
+            count_condition.append(HISTOGRAM_COUNT_FMT.format(t_from=time_from,
+                                                              to=time_to, label=label))
+
+        sql = HISTOGRAM.format(count_condition=",\n".join(count_condition),
+                               max_time=time_units[0])
+        con = self._connect()
+        with con:
+            cursor = con.cursor(MySQLdb.cursors.DictCursor)
+            cursor.execute(sql)
+            histogram = cursor.fetchall()
+        if histogram:
+            histogram_list = [dict(time=k, count=v) for k, v in histogram[0].items()]
+            return sorted(histogram_list, key=lambda d: d['time'])

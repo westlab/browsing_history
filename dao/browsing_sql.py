@@ -89,3 +89,13 @@ WHERE browsing_time IS NOT NULL AND
 ORDER BY id DESC
 LIMIT 1
 """
+
+HISTOGRAM = """\
+SELECT
+{count_condition}
+FROM (SELECT timestamp FROM browsing_history WHERE timestamp > '{max_time}') AS timestamp_groups
+"""
+
+HISTOGRAM_COUNT_FMT = """\
+COUNT(CASE WHEN timestamp >= '{t_from}' AND timestamp < '{to}' THEN 1 END) AS '{label}'
+"""
