@@ -118,7 +118,7 @@ class BrowsingMariaDao(MariaDao):
         with con:
             cursor = con.cursor()
             cursor.execute(sql)
-            for row in cursor.execute(sql):
+            for row in cursor.fetchall():
                 c[row[0]] += 1
         top = c.most_common(n)
         src_ip_rank = [dict(name=x[0], count=x[1]) for x in top]
