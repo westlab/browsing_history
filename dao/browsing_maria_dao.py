@@ -83,9 +83,11 @@ class BrowsingMariaDao(MariaDao):
             count = cursor.fetchone()[0]
             return count
 
-    def domain_ranking(self, n=10):
+    def domain_ranking(self, n=10, within=30):
         c = Counter()
-        sql = DOMAIN
+        now = datetime.now()
+        lower_bound = now - timedelta(minutes=within)
+        sql = DOMAIN.format(lower_bound=lower_bound)
         con = self._connect()
         with con:
             cursor = con.cursor()
@@ -107,9 +109,11 @@ class BrowsingMariaDao(MariaDao):
             for row in cursor.fetchall():
                 yield dict(zip(cols, row))
 
-    def src_ip_ranking(self, n=10):
+    def src_ip_ranking(self, n=10, within=30):
         c = Counter()
-        sql = SRCIP
+        now = datetime.now()
+        lower_bound = now - timedelta(minutes=within)
+        sql = SRCIP.format(lower_bound=lower_bound)
         con = self._connect()
         with con:
             cursor = con.cursor()
