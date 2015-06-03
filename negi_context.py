@@ -73,7 +73,7 @@ def rest_server():
     app.register_blueprint(v1, url_prefix='/v1')
     app.run(port=port, debug=debug)
 
-def browsing_time_deamon():
+def browsing_time_daemon():
     LoggerFactory.init(config_file="browsing_time_estimation.cfg")
     browsing_time_worker = BrowsingTimeWorker(context)
     browsing_time_worker.daemon = True
@@ -105,6 +105,6 @@ if __name__ == "__main__":
     if args.program == 'server':
         rest_server()
     if args.program == 'browsing_timed':
-        browsing_time_deamon()
+        browsing_time_daemon()
     if args.program == 'loader':
         loader()
