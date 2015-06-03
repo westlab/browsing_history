@@ -16,8 +16,6 @@ description="""\
 negi context for rest server
 """
 
-browsing_db = '/tmp/browsing_history.sqlite3'
-
 parser = argparse.ArgumentParser(description=description)
 parser.add_argument('program',
                     type=str,

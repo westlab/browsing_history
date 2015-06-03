@@ -81,7 +81,9 @@ def word_cloud():
 
 @v1.route('/histogram/http', methods=['GET'])
 def http_histogram():
-    data = browsing_dao.http_histogram()
+    per = request.args.get('per', default=10, type=int)
+    num = request.args.get('num', default=28, type=int)
+    data = browsing_dao.http_histogram(per, num)
     count = len(data)
     headers = {"X-Data-Count": count}
     return Response(json.dumps(data),
