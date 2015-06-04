@@ -58,12 +58,12 @@ def src_ip_ranking():
 def search():
     keyword = request.args.get('keyword')
     if keyword:
-        data = browsing_dao.search(keyword, cols)
+        data = list(browsing_dao.search(keyword, cols))
         count = len(data)
     else:
-        data = browsing_dao.get_with_browsing_time(cols)
+        data = list(browsing_dao.get_with_browsing_time(cols))
         all_data = browsing_dao.count_all()
-        count = len(all_data)
+        count = all_data
     headers = {"X-Data-Count": count}
     return Response(json.dumps(data),
                     mimetype='application/json',
