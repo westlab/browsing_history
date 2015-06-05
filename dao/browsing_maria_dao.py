@@ -114,7 +114,6 @@ class BrowsingMariaDao(MariaDao):
         now = datetime.now()
         lower_bound = now - timedelta(minutes=within)
         sql = SRCIP.format(lower_bound=lower_bound)
-        print(sql)
         con = self._connect()
         with con:
             cursor = con.cursor()
@@ -150,11 +149,11 @@ class BrowsingMariaDao(MariaDao):
         for time_from, time_to in pairwise(time_units):
             label = time_from.strftime("%H:%M")
             count_condition.append(HISTOGRAM_COUNT_FMT.format(t_from=time_from,
-                                                              to=time_to, label=label))
+                                                              to=time_to,
+                                                              label=label))
 
         sql = HISTOGRAM.format(count_condition=",\n".join(count_condition),
                                max_time=time_units[0])
-        print(sql)
         con = self._connect()
         with con:
             cursor = con.cursor(MySQLdb.cursors.DictCursor)
