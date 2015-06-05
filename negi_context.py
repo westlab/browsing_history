@@ -62,13 +62,13 @@ def rest_server():
 
     LoggerFactory.init()
     logger = LoggerFactory.create_logger('rest_server')
-    logger.info("test")
     port = context.config.getint('rest_server', 'port')
     debug = context.config.getboolean('rest_server', 'debug')
 
     app = Flask(__name__)
     CORS(app, expose_headers=['X-Data-Count'])
     app.register_blueprint(v1, url_prefix='/v1')
+    logger.info("Rest server start")
     app.run(port=port, debug=debug)
 
 def browsing_time_daemon():
