@@ -1,4 +1,5 @@
 from flask import Blueprint, Response, json, request
+
 from negi_context import context
 
 v1 = Blueprint('v1', __name__)
