@@ -67,7 +67,7 @@ def rest_server():
     debug = context.config.getboolean('rest_server', 'debug')
 
     app = Flask(__name__)
-    cors = CORS(app)
+    CORS(app, expose_headers=['X-Data-Count'])
     app.register_blueprint(v1, url_prefix='/v1')
     app.run(port=port, debug=debug)
 
