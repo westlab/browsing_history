@@ -11,6 +11,7 @@ from common.logging.logger_factory import LoggerFactory
 from browsing_time_worker import BrowsingTimeWorker
 from negi_load_worker import NegiLoadWorker
 from browsing_reconstruct_worker import BrowsingReconstructWorker
+from browsing_dummy import insert_dummy_browsing
 
 description="""\
 negi context for rest server
@@ -19,7 +20,7 @@ negi context for rest server
 parser = argparse.ArgumentParser(description=description)
 parser.add_argument('program',
                     type=str,
-                    choices=('server', 'browsing_timed', 'loader'),
+                    choices=('server', 'browsing_timed', 'loader', 'dummy'),
                     help='program that you want to run')
 parser.add_argument('conf',
                     type=str,
@@ -98,6 +99,8 @@ def loader():
                 exit(1)
         time.sleep(1)
 
+def dummy():
+    insert_dummy_browsing(context, sleep=0.2)
 
 if __name__ == "__main__":
     if args.program == 'server':
@@ -106,3 +109,5 @@ if __name__ == "__main__":
         browsing_time_daemon()
     if args.program == 'loader':
         loader()
+    if args.program == 'dummy':
+        dummy()
