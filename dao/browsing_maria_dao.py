@@ -162,3 +162,19 @@ class BrowsingMariaDao(MariaDao):
         if histogram:
             histogram_list = [dict(time=k, count=v) for k, v in histogram[0].items()]
             return sorted(histogram_list, key=lambda d: d['time'])
+
+    def get_after(self, cols, after=None):
+        """
+            Return after id
+        """
+        sql = SELECT_COLS.format(cols=cols)
+
+        if after is not None:
+            sql += ' WHERE id > {0}'.format(after)
+
+        con = self._connect()
+        with con:
+            cursor = con.cursor()
+            cursor.execute(sql)
+            for row in cursor.fetchall():
+                yield dict(zip(cols, row))

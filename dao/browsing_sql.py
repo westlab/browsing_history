@@ -101,3 +101,7 @@ FROM (SELECT timestamp FROM browsing_history WHERE timestamp > '{max_time}') AS 
 HISTOGRAM_COUNT_FMT = """\
 COUNT(CASE WHEN timestamp >= '{t_from}' AND timestamp < '{to}' THEN 1 END) AS '{label}'
 """
+
+SELECT_COLS = """\
+SELECT {cols} FROM browsing_history
+"""
