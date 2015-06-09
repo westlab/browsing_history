@@ -1,6 +1,7 @@
 from urllib.parse import urlparse
 from datetime import datetime, timedelta
 from collections import Counter
+import hashlib
 
 import MySQLdb
 
@@ -15,8 +16,9 @@ class BrowsingMariaDao(MariaDao):
         self._execute(INIT_Maria)
 
     def save(self, http_comm):
+        src_ip = hashlib.md5(http_comm.src_ip).hexdigest()
         sql = INSERT_HTTP_COMMUNICATION.format(
-            src_ip=http_comm.src_ip, src_port=http_comm.src_port,
+            src_ip=src_ip, src_port=http_comm.src_port,
             dst_ip=http_comm.dst_ip, dst_port=http_comm.dst_port,
             timestamp=http_comm.timestamp,
             title=self._escape_sql(http_comm.title),
