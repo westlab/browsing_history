@@ -1,18 +1,3 @@
-INIT_SQL ="""\
-CREATE TABLE IF NOT EXISTS "browsing_history" (
-"id" INTEGER PRIMARY KEY AUTOINCREMENT,
-"src_ip" TEXT,
-"src_port" INTEGER,
-"dst_ip" TEXT,
-"dst_port" INTEGER,
-"timestamp" TEXT,
-"title" TEXT,
-"url" TEXT,
-"browsing_time" FLOAT,
-"download" INTEGER
-)
-"""
-
 INIT_Maria = """\
 CREATE TABLE IF NOT EXISTS browsing_history (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -23,6 +8,7 @@ CREATE TABLE IF NOT EXISTS browsing_history (
   timestamp datetime NOT NULL,
   title text,
   url text,
+  created_at datetime DEFAULT CURRENT_TIMESTAMP,
   browsing_time float,
   download int(11),
   PRIMARY KEY (id),
@@ -40,7 +26,8 @@ VALUES
 
 SELECT_FOR_BROWSING_TIME = """\
 SELECT id, src_ip, timestamp FROM browsing_history
-WHERE browsing_time IS NULL OR browsing_time = ''
+WHERE (browsing_time IS NULL OR browsing_time = '') AND
+  created_at > '{timeout}'
 """
 
 UPDATE_BROWSING_TIME="""\
@@ -75,12 +62,14 @@ WHERE browsing_time IS NOT NULL AND {condition}
 
 DOMAIN = """\
 SELECT url FROM browsing_history
-WHERE browsing_time IS NOT NULL
+WHERE browsing_time IS NOT NULL AND
+  timestamp > '{lower_bound}'
 """
 
 SRCIP = """\
 SELECT src_ip FROM browsing_history
-WHERE browsing_time IS NOT NULL
+WHERE browsing_time IS NOT NULL AND
+  timestamp > '{lower_bound}'
 """
 
 SEARCH_TMP = """\
@@ -88,11 +77,27 @@ SELECT {cols} FROM browsing_history
 WHERE browsing_time IS NOT NULL
     AND (
         src_ip REGEXP '{keyword}'
-        OR dst_ip REGEXP '{keyword}'
-        OR src_port REGEXP '{keyword}'
-        OR dst_port REGEXP '{keyword}'
         OR url REGEXP '{keyword}'
         OR title REGEXP '{keyword}'
     )
 ORDER BY id DESC
+"""
+
+LAST_BROWSING_BY_SRC_IP = """\
+SELECT id, src_ip, timestamp
+FROM browsing_history
+WHERE browsing_time IS NOT NULL AND
+  src_ip = '{src_ip}'
+ORDER BY id DESC
+LIMIT 1
+"""
+
+HISTOGRAM = """\
+SELECT
+{count_condition}
+FROM (SELECT timestamp FROM browsing_history WHERE timestamp > '{max_time}') AS timestamp_groups
+"""
+
+HISTOGRAM_COUNT_FMT = """\
+COUNT(CASE WHEN timestamp >= '{t_from}' AND timestamp < '{to}' THEN 1 END) AS '{label}'
 """

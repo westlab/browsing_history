@@ -1,23 +1,24 @@
-import time
 from datetime import datetime
 
-from http_communication import HTTPCommunication, is_request_and_response_pair
-from http_filters import HttpFilters
+from dto.http_communication import HTTPCommunication, is_request_and_response_pair
+from common.filters.http_filter import HttpFilter
+from common.logging.logger_factory import LoggerFactory
 
 
 class BrowsingReconstruct:
     def __init__(self, browsing_dao, timeout=10):
+        self._logger = LoggerFactory.create_logger(self)
         self._http_comms = {}
-        self._timeout = timeout # Seconds
+        self._timeout = timeout  # Seconds
         self._counter = 0
         self._browsing_dao = browsing_dao
-        self._filters = HttpFilters()
+        self._filters = HttpFilter()
 
     def add_http_result(self, http_result):
         http_comm = HTTPCommunication(http_result.id, http_result.src_ip,
-                        http_result.dst_ip, http_result.src_port,
-                        http_result.dst_port, http_result.timestamp,
-                        http_result.stream_id)
+                                      http_result.dst_ip, http_result.src_port,
+                                      http_result.dst_port, http_result.timestamp,
+                                      http_result.stream_id)
 
         key = http_comm.five_tuple_key
         if http_result.pattern == 'GET':
@@ -25,21 +26,21 @@ class BrowsingReconstruct:
             self._http_comms[key] = http_comm
 
         if http_result.pattern == 'Host:':
-            if not key in self._http_comms:
+            if key not in self._http_comms:
                 return
 
             if self._http_comms[key].stream_id == http_comm.stream_id:
                 self._http_comms[key].host = http_result.result
 
         if http_result.pattern == 'Content-Type:':
-            if not key in self._http_comms:
+            if key not in self._http_comms:
                 return
 
             if is_request_and_response_pair(self._http_comms[key], http_comm):
                 self._http_comms[key].content_type = http_result.result
 
         if http_result.pattern == '<title':
-            if not key in self._http_comms:
+            if key not in self._http_comms:
                 return
 
             if is_request_and_response_pair(self._http_comms[key], http_comm):
@@ -58,7 +59,6 @@ class BrowsingReconstruct:
 
     def _is_http_comm_valid(self, key):
         http_comm = self._http_comms[key]
-        repr(http_comm)
         if not http_comm.is_valid():
             return False
 
@@ -93,3 +93,5 @@ class BrowsingReconstruct:
 
         for key in gc_keys:
             del self._http_comms[key]
+
+        self._logger.info("{0} record are deleted".format(len(gc_keys)))

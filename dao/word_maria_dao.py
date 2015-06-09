@@ -4,13 +4,13 @@ from datetime import datetime, timedelta
 from dao.maria_dao import MariaDao
 
 INIT_WORD = """\
-CREATE TABLE IF NOT EXISTS `word` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `count` int(11) DEFAULT 0,
-  `timestamp` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `index_word_on_timestamp` (`timestamp`)
+CREATE TABLE IF NOT EXISTS word (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  name varchar(255) NOT NULL,
+  count int(11) DEFAULT 0,
+  timestamp datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY index_word_on_timestamp (timestamp)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 """
 
@@ -32,7 +32,7 @@ def bulk_insert_sql(words):
 class WordMariaDao(MariaDao):
     def __init__(self, host, user, password, db):
         super().__init__(host, user, password, db)
-        self._init_db(INIT_WORD)
+        self._execute(INIT_WORD)
 
     def get(self, within, n=100):
         """
@@ -41,21 +41,24 @@ class WordMariaDao(MariaDao):
         cols = ['name', 'count']
         c = Counter()
         now = datetime.now()
-        timestamp = now - timedelta(minutes = within)
+        timestamp = now - timedelta(minutes=within)
         sql = WORD_WITHIN.format(
-                    cols=",".join(cols),
-                    border=timestamp.strftime(self.timestamp_fmt)
-                )
-        cursor = self._con.cursor()
-        cursor.execute(sql)
-        rows = cursor.fetchall()
-        for row in rows:
-            c[row[0]] += row[1]
+            cols=",".join(cols),
+            border=timestamp.strftime(self.timestamp_fmt)
+            )
+        con = self._connect()
+        with con:
+            cursor = con.cursor()
+            cursor.execute(sql)
+            rows = cursor.fetchall()
+            for row in rows:
+                c[row[0]] += row[1]
         top = c.most_common(n)
         r = [dict(name=x[0],count=x[1]) for x in top]
         return r
 
     def bulk_put(self, words):
+        # check is instance is list
         sql = bulk_insert_sql(words)
         self._execute(sql)
 
