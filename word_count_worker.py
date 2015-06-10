@@ -1,13 +1,25 @@
 from multiprocessing import Process
 import time
 
+import MeCab
+
 from common.logging.logger_factory import LoggerFactory
+
+
+MECAB_MODE = 'mecabrc -u /home/interop/2015/wikipedia.dic'
+tagger = MeCab.Tagger(MECAB_MODE)
+
 
 def parse2word(text):
     """
         Return generator of word
     """
-    pass
+    for mecab in tagger.parse(text).splitlines():
+        wakati = mecab.split("\t")
+        if len(wakati) == 2:
+            word = wakati[0]
+            word_type = wakati[1].split(',')[0]
+            yield word, word_type
 
 
 class WordCountWorker(Process):
@@ -29,10 +41,9 @@ class WordCountWorker(Process):
             browsing = None
             for browsing in browsings:
                 cnt += 1
-                words = [(word, 1) for word in parse2word(browsing['title'])]
+                words = [(word, 1) for word, word_type in parse2word(browsing['title']) if word_type == '名詞']
                 word_dao.bulk_put(words)
 
             if browsing:
                 negi_meta_dao.put(last_browsing_id_by_word, browsing['id'])
                 self._logger.info("{0} browsing are processed".format(cnt))
-            time.sleep(5)
