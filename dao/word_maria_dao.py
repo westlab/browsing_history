@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS word (
 
 WORD_WITHIN = """\
 SELECT {cols} FROM word
-WHERE timestamp > {border}
+WHERE timestamp > '{border}'
 """
 
 WORD_INSERT = """\
