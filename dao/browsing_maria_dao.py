@@ -16,7 +16,7 @@ class BrowsingMariaDao(MariaDao):
         self._execute(INIT_Maria)
 
     def save(self, http_comm):
-        src_ip = hashlib.md5(http_comm.src_ip).hexdigest()
+        src_ip = hashlib.md5(http_comm.src_ip.encode('utf-8')).hexdigest()
         sql = INSERT_HTTP_COMMUNICATION.format(
             src_ip=src_ip, src_port=http_comm.src_port,
             dst_ip=http_comm.dst_ip, dst_port=http_comm.dst_port,
