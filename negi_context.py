@@ -12,6 +12,7 @@ from browsing_time_worker import BrowsingTimeWorker
 from negi_load_worker import NegiLoadWorker
 from browsing_reconstruct_worker import BrowsingReconstructWorker
 from browsing_dummy import insert_dummy_browsing
+from word_count_worker import WordCountWorker
 
 description="""\
 negi context for rest server
@@ -20,7 +21,7 @@ negi context for rest server
 parser = argparse.ArgumentParser(description=description)
 parser.add_argument('program',
                     type=str,
-                    choices=('server', 'browsing_timed', 'loader', 'dummy'),
+                    choices=('server', 'browsing_timed', 'loader', 'dummy', 'word'),
                     help='program that you want to run')
 parser.add_argument('conf',
                     type=str,
@@ -99,6 +100,17 @@ def loader():
                 exit(1)
         time.sleep(1)
 
+def word():
+    LoggerFactory.init(config_file="word.cfg")
+    word_count_worker = WordCountWorker(context)
+    word_count_worker.daemon = True
+    word_count_worker.start()
+    while True:
+        if not word_count_worker.is_alive():
+            exit(1)
+        time.sleep(1)
+
+
 def dummy():
     insert_dummy_browsing(context, sleep=0.2)
 
@@ -111,3 +123,5 @@ if __name__ == "__main__":
         loader()
     if args.program == 'dummy':
         dummy()
+    if args.program == 'word':
+        word()

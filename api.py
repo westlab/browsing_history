@@ -72,7 +72,7 @@ def search():
 
 @v1.route('/word', methods=['GET'])
 def word_cloud():
-    data = word_dao.get(10)
+    data = word_dao.get(30, 200)
     count = len(data)
     headers = {"X-Data-Count": count}
     return Response(json.dumps(data),

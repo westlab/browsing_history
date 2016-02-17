@@ -3,6 +3,10 @@ from datetime import datetime, timedelta
 
 from dao.maria_dao import MariaDao
 
+
+__all__ = ['WordMariaDao']
+
+
 INIT_WORD = """\
 CREATE TABLE IF NOT EXISTS word (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -16,7 +20,7 @@ CREATE TABLE IF NOT EXISTS word (
 
 WORD_WITHIN = """\
 SELECT {cols} FROM word
-WHERE timestamp > {border}
+WHERE timestamp > '{border}'
 """
 
 WORD_INSERT = """\
@@ -36,7 +40,7 @@ class WordMariaDao(MariaDao):
 
     def get(self, within, n=100):
         """
-        Return top n word within x minites
+        Return top n word within x minutes
         """
         cols = ['name', 'count']
         c = Counter()
